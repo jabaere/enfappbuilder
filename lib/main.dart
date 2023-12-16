@@ -8,7 +8,9 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  const MyApp({super.key});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +45,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
 
   Widget getPage() {
     switch (_selectedIndex) {
       case 0:
-        return HomeScreen();
+        return const HomeScreen();
       case 1:
-        return UploadScreen();
+        return const UploadScreen();
       default:
         throw UnimplementedError("Page not found");
     }
@@ -100,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.upload),
             color: Colors.grey[200],
             onPressed: () {
-              Navigator.of(context).push(_createRoute(UploadScreen()));
+              Navigator.of(context).push(_createRoute(const UploadScreen()));
             },
           ),
           IconButton(

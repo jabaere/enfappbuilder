@@ -10,7 +10,7 @@ class InstructionsScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.grey[200])
       ),
       body: Container(
-        child: Text('instrucions'),
+        child: const Text('instrucions'),
       ),
     );
   }

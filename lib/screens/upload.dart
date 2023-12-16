@@ -2,6 +2,8 @@ import 'dart:html' as html;
 import 'package:flutter/material.dart';
 
 class UploadScreen extends StatefulWidget {
+  const UploadScreen({super.key});
+
   @override
   _UploadScreenState createState() => _UploadScreenState();
 }

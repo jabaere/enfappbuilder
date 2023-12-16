@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //
   final _textareaTextInput = TextEditingController();
 
-  List<String> _debtorInfo = [];
+  final List<String> _debtorInfo = [];
   bool checkboxValueForTransition = false;
   bool checkboxValueForProperty = false;
   //
