@@ -4,6 +4,7 @@ import 'package:applicationbuilder/particles/orginputs.dart';
 import 'package:docx_template/docx_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:quickalert/quickalert.dart';
 
@@ -12,6 +13,7 @@ bool isLoading = false;
 //attach a GlobalKey to a DebtorInputs class,
 final GlobalKey<DebtInputsState> debtInputsKey = GlobalKey<DebtInputsState>();
 //
+final GlobalKey<OrgInputsState> orgInputsKey = GlobalKey<OrgInputsState>();
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -54,6 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String orgIdentifyNumberValue = '';
 
   final headerStyle = const TextStyle(color: Colors.teal, fontSize: 18);
+
+  final storage  = LocalStorage('app');
   // List<String> userIdentifyInputValues = List.generate(11, (index) => '');
 
   // void updateInputValue(int index, String value) {
@@ -217,8 +221,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     setState(() {
                       isLoading = true; // Set loading state
                     });
+                   
 
-                    try {
+                  try {
                       await changeTextContent(
                         _orgNameController.text,
                         _orgIdController.text,

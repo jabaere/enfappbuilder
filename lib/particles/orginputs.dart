@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localstorage/localstorage.dart';
 
 class OrgInputs extends StatefulWidget {
   final TextEditingController orgNameController;
@@ -25,15 +26,78 @@ class OrgInputs extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _OrgInputsState createState() => _OrgInputsState();
+  OrgInputsState createState() => OrgInputsState();
 }
 
-class _OrgInputsState extends State<OrgInputs> {
+class OrgInputsState extends State<OrgInputs> {
   final smallGap = const SizedBox(height: 20);
   // Create a ValueNotifier to hold the checkbox state
   bool isSaveCheckboxValue = false;
   bool isRepresentative = true;
   bool isInputOn = true;
+
+ //localstorage variables
+  late LocalStorage storage;
+  String? organizationName;
+  String? organizationId;
+  String? organizationAddress;
+  String? organizationNumber;
+  String? organizationBankIbanNumber;
+  String? organizationBanckAccount;
+  String? organizationRepresentatorName;
+  String? organizationRepresentatorAdress;
+  String? organizationRepresentatorInfo;
+  bool? saveData;
+  bool? representative;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeStorage();
+  }
+ //fetch data from localstorage
+    Future<void> initializeStorage() async {
+    storage = LocalStorage('app');
+    await storage.ready;
+    setState(() {
+      //checkbox data
+      saveData = storage.getItem('saveData');
+      representative = storage.getItem('representator');
+      isRepresentative = representative ?? true;
+      isSaveCheckboxValue = saveData ?? false;
+      //other inputs
+      organizationName = storage.getItem('organizationName');
+      organizationId = storage.getItem('organizationId');
+      organizationAddress = storage.getItem('organizationAddress');
+      organizationNumber = storage.getItem('organizationNumber');
+      organizationBankIbanNumber = storage.getItem('organizationBankIbanNumber');
+      organizationBanckAccount = storage.getItem('organizationBanckAccount');
+      //------------------------------------------------------
+      widget.orgNameController.text = organizationName ?? '';
+      widget.orgIdController.text = organizationId ?? '';
+      widget.orgAddressController.text = organizationAddress ?? '';
+      widget.orgPhoneNumberController.text = organizationNumber ?? '';
+      widget.orgIBanNumberController.text = organizationBankIbanNumber ?? '';
+      widget.orgAccuntNumberController.text = organizationBanckAccount ?? '';
+
+      //representator 
+
+      if(isRepresentative == true) {
+          organizationRepresentatorName = storage.getItem('organizationRepresentatorName');
+          organizationRepresentatorAdress = storage.getItem('organizationRepresentatorAdress');
+          organizationRepresentatorInfo = storage.getItem('organizationRepresentatorInfo');
+          //----------------------------------------------------------------------------
+          widget.representativeNameController.text = organizationRepresentatorName ?? '';
+          widget.representativeAdressController.text = organizationRepresentatorAdress ?? '';
+          widget.representativeNumberAndEmailController.text = organizationRepresentatorInfo ?? '';
+      }
+    });
+  }
+
+  void generateLocalstorageItems (String name, String content){
+
+          storage.setItem(name, content);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +119,11 @@ class _OrgInputsState extends State<OrgInputs> {
                 value: isRepresentative,
                 onChanged: (newValue) {
                   // Update the checkbox state using the ValueNotifier
+                  
                   setState(() {
                     isRepresentative = newValue ?? false;
                   });
+                  storage.setItem('representator', isRepresentative);
                   print(isRepresentative);
                 },
               ),
@@ -74,6 +140,28 @@ class _OrgInputsState extends State<OrgInputs> {
                     isSaveCheckboxValue = newValue ?? false;
                   });
                   print(isSaveCheckboxValue);
+                   storage.setItem('saveData', isSaveCheckboxValue);
+                  if(isSaveCheckboxValue == true){
+                      
+                      //  storage.setItem('organizationName', widget.orgNameController.text);
+                      //  storage.setItem('organizationId', widget.orgIdController.text);
+                      //  storage.setItem('organizationAddress', widget.orgAddressController.text);
+                       generateLocalstorageItems('organizationName',widget.orgNameController.text);
+                       generateLocalstorageItems('organizationId',widget.orgIdController.text);
+                       generateLocalstorageItems('organizationAddress',widget.orgAddressController.text);
+                       generateLocalstorageItems('organizationNumber',widget.orgPhoneNumberController.text);
+                       generateLocalstorageItems('organizationBankIbanNumber',widget.orgIBanNumberController.text);
+                       generateLocalstorageItems('organizationBanckAccount',widget.orgAccuntNumberController.text);
+
+                       if(isRepresentative == true){
+                         generateLocalstorageItems('organizationRepresentatorName',widget.representativeNameController.text);
+                          generateLocalstorageItems('organizationRepresentatorAdress',widget.representativeAdressController.text);
+                           generateLocalstorageItems('organizationRepresentatorInfo',widget.representativeNumberAndEmailController.text);
+                       }
+
+                  }else{ 
+                      //storage.clear();
+                  }
                 },
               ),
               const Text('ინფორმაციის დამახსოვრება')
