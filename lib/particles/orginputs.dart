@@ -9,6 +9,7 @@ class OrgInputs extends StatefulWidget {
   final TextEditingController orgIBanNumberController;
   final TextEditingController orgAccuntNumberController;
   final TextEditingController representativeNameController;
+  final TextEditingController representativeIdController;
   final TextEditingController representativeAdressController;
   final TextEditingController representativeNumberAndEmailController;
 
@@ -23,6 +24,7 @@ class OrgInputs extends StatefulWidget {
     required this.representativeNameController,
     required this.representativeAdressController,
     required this.representativeNumberAndEmailController,
+    required this.representativeIdController,
   }) : super(key: key);
 
   @override
@@ -36,7 +38,7 @@ class OrgInputsState extends State<OrgInputs> {
   bool isRepresentative = true;
   bool isInputOn = true;
 
- //localstorage variables
+  //localstorage variables
   late LocalStorage storage;
   String? organizationName;
   String? organizationId;
@@ -45,6 +47,7 @@ class OrgInputsState extends State<OrgInputs> {
   String? organizationBankIbanNumber;
   String? organizationBanckAccount;
   String? organizationRepresentatorName;
+  String? organizationRepresentatorIdNumber;
   String? organizationRepresentatorAdress;
   String? organizationRepresentatorInfo;
   bool? saveData;
@@ -55,8 +58,9 @@ class OrgInputsState extends State<OrgInputs> {
     super.initState();
     initializeStorage();
   }
- //fetch data from localstorage
-    Future<void> initializeStorage() async {
+
+  //fetch data from localstorage
+  Future<void> initializeStorage() async {
     storage = LocalStorage('app');
     await storage.ready;
     setState(() {
@@ -70,7 +74,8 @@ class OrgInputsState extends State<OrgInputs> {
       organizationId = storage.getItem('organizationId');
       organizationAddress = storage.getItem('organizationAddress');
       organizationNumber = storage.getItem('organizationNumber');
-      organizationBankIbanNumber = storage.getItem('organizationBankIbanNumber');
+      organizationBankIbanNumber =
+          storage.getItem('organizationBankIbanNumber');
       organizationBanckAccount = storage.getItem('organizationBanckAccount');
       //------------------------------------------------------
       widget.orgNameController.text = organizationName ?? '';
@@ -80,24 +85,34 @@ class OrgInputsState extends State<OrgInputs> {
       widget.orgIBanNumberController.text = organizationBankIbanNumber ?? '';
       widget.orgAccuntNumberController.text = organizationBanckAccount ?? '';
 
-      //representator 
+      //representator
 
-      if(isRepresentative == true) {
-          organizationRepresentatorName = storage.getItem('organizationRepresentatorName');
-          organizationRepresentatorAdress = storage.getItem('organizationRepresentatorAdress');
-          organizationRepresentatorInfo = storage.getItem('organizationRepresentatorInfo');
-          //----------------------------------------------------------------------------
-          widget.representativeNameController.text = organizationRepresentatorName ?? '';
-          widget.representativeAdressController.text = organizationRepresentatorAdress ?? '';
-          widget.representativeNumberAndEmailController.text = organizationRepresentatorInfo ?? '';
+      if (isRepresentative == true) {
+        organizationRepresentatorName =
+            storage.getItem('organizationRepresentatorName');
+        organizationRepresentatorAdress =
+            storage.getItem('organizationRepresentatorAdress');
+        organizationRepresentatorInfo =
+            storage.getItem('organizationRepresentatorInfo');
+        organizationRepresentatorIdNumber = storage.getItem('organizationRepresentatorIdNumber');
+        //----------------------------------------------------------------------------
+        widget.representativeNameController.text =
+            organizationRepresentatorName ?? '';
+        widget.representativeIdController.text = organizationRepresentatorIdNumber ?? '';
+        widget.representativeAdressController.text =
+            organizationRepresentatorAdress ?? '';
+        widget.representativeNumberAndEmailController.text =
+            organizationRepresentatorInfo ?? '';
       }
     });
   }
+  //---------------------------------------------------------------------------------------
 
-  void generateLocalstorageItems (String name, String content){
-
-          storage.setItem(name, content);
+  void generateLocalstorageItems(String name, String content) {
+    storage.setItem(name, content);
   }
+
+  //----------------------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +134,7 @@ class OrgInputsState extends State<OrgInputs> {
                 value: isRepresentative,
                 onChanged: (newValue) {
                   // Update the checkbox state using the ValueNotifier
-                  
+
                   setState(() {
                     isRepresentative = newValue ?? false;
                   });
@@ -140,35 +155,44 @@ class OrgInputsState extends State<OrgInputs> {
                     isSaveCheckboxValue = newValue ?? false;
                   });
                   print(isSaveCheckboxValue);
-                   storage.setItem('saveData', isSaveCheckboxValue);
-                  if(isSaveCheckboxValue == true){
-                      
-                      //  storage.setItem('organizationName', widget.orgNameController.text);
-                      //  storage.setItem('organizationId', widget.orgIdController.text);
-                      //  storage.setItem('organizationAddress', widget.orgAddressController.text);
-                       generateLocalstorageItems('organizationName',widget.orgNameController.text);
-                       generateLocalstorageItems('organizationId',widget.orgIdController.text);
-                       generateLocalstorageItems('organizationAddress',widget.orgAddressController.text);
-                       generateLocalstorageItems('organizationNumber',widget.orgPhoneNumberController.text);
-                       generateLocalstorageItems('organizationBankIbanNumber',widget.orgIBanNumberController.text);
-                       generateLocalstorageItems('organizationBanckAccount',widget.orgAccuntNumberController.text);
+                  storage.setItem('saveData', isSaveCheckboxValue);
+                  if (isSaveCheckboxValue == true) {
+                    //  storage.setItem('organizationName', widget.orgNameController.text);
+                    //  storage.setItem('organizationId', widget.orgIdController.text);
+                    //  storage.setItem('organizationAddress', widget.orgAddressController.text);
+                    generateLocalstorageItems(
+                        'organizationName', widget.orgNameController.text);
+                    generateLocalstorageItems(
+                        'organizationId', widget.orgIdController.text);
+                    generateLocalstorageItems('organizationAddress',
+                        widget.orgAddressController.text);
+                    generateLocalstorageItems('organizationNumber',
+                        widget.orgPhoneNumberController.text);
+                    generateLocalstorageItems('organizationBankIbanNumber',
+                        widget.orgIBanNumberController.text);
+                    generateLocalstorageItems('organizationBanckAccount',
+                        widget.orgAccuntNumberController.text);
 
-                       if(isRepresentative == true){
-                         generateLocalstorageItems('organizationRepresentatorName',widget.representativeNameController.text);
-                          generateLocalstorageItems('organizationRepresentatorAdress',widget.representativeAdressController.text);
-                           generateLocalstorageItems('organizationRepresentatorInfo',widget.representativeNumberAndEmailController.text);
-                       }
-
-                  }else{ 
-                      //storage.clear();
+                    if (isRepresentative == true) {
+                      generateLocalstorageItems('organizationRepresentatorName',
+                          widget.representativeNameController.text);
+                       generateLocalstorageItems('organizationRepresentatorIdNumber',
+                          widget.representativeIdController.text);
+                      generateLocalstorageItems(
+                          'organizationRepresentatorAdress',
+                          widget.representativeAdressController.text);
+                      generateLocalstorageItems('organizationRepresentatorInfo',
+                          widget.representativeNumberAndEmailController.text);
+                    }
+                  } else {
+                    //storage.clear();
                   }
                 },
               ),
               const Text('ინფორმაციის დამახსოვრება')
             ],
           ),
-                smallGap,
-  
+          smallGap,
         ],
       ),
     );
@@ -176,33 +200,37 @@ class OrgInputsState extends State<OrgInputs> {
 
   List<Widget> _buildTwoRowsFormFields() {
     return [
-     
-      _buildField(
-          'აპლიკანტის დასახელება', widget.orgNameController, isSaveCheckboxValue),
+      _buildField('აპლიკანტის დასახელება', widget.orgNameController,
+          isSaveCheckboxValue),
       _buildField('აპლიკანტის საიდენტიფიკაციო კოდი', widget.orgIdController,
           isSaveCheckboxValue),
-      _buildField(
-          'აპლიკანტის მისამართი', widget.orgAddressController, isSaveCheckboxValue),
+      _buildField('აპლიკანტის მისამართი', widget.orgAddressController,
+          isSaveCheckboxValue),
       _buildField('აპლიკანტის ტელეფონის ნომერი',
           widget.orgPhoneNumberController, isSaveCheckboxValue),
       _buildField(
           'IBAN - ნომერი', widget.orgIBanNumberController, isSaveCheckboxValue),
       _buildField('აპლიკანტის ანგარიშის ნომერი',
           widget.orgAccuntNumberController, isSaveCheckboxValue),
-      isRepresentative? Wrap(
-        spacing: 10.0, // Horizontal spacing between fields
-        runSpacing: 10.0, // Vertical spacing between lines
-        //alignment: isSmallScreen ? WrapAlignment.center : WrapAlignment.start,
-        children: [
-          _buildField(
-              'წარმომადგენელი', widget.representativeNameController, isSaveCheckboxValue),
-          _buildField('წარმომადგენლის მისამართი',
-              widget.representativeAdressController, isSaveCheckboxValue),
-          _buildField('წარმომადგენლის Phone & Email',
-              widget.representativeNumberAndEmailController, isSaveCheckboxValue),
-        ],
-      ):Container()
-
+      isRepresentative
+          ? Wrap(
+              spacing: 10.0, // Horizontal spacing between fields
+              runSpacing: 10.0, // Vertical spacing between lines
+              //alignment: isSmallScreen ? WrapAlignment.center : WrapAlignment.start,
+              children: [
+                _buildField('წარმომადგენელი',
+                    widget.representativeNameController, isSaveCheckboxValue),
+                _buildField('წარმომადგენლის პირადი ნომერი',
+                    widget.representativeIdController, isSaveCheckboxValue),
+                _buildField('წარმომადგენლის მისამართი',
+                    widget.representativeAdressController, isSaveCheckboxValue),
+                _buildField(
+                    'წარმომადგენლის Phone & Email',
+                    widget.representativeNumberAndEmailController,
+                    isSaveCheckboxValue),
+              ],
+            )
+          : Container()
     ];
   }
 

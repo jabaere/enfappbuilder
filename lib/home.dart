@@ -10,6 +10,7 @@ import 'package:quickalert/quickalert.dart';
 
 //
 bool isLoading = false;
+bool warning = false;
 //attach a GlobalKey to a DebtorInputs class,
 final GlobalKey<DebtInputsState> debtInputsKey = GlobalKey<DebtInputsState>();
 //
@@ -34,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _orgIBanNumberController = TextEditingController();
   final _orgAccuntNumberController = TextEditingController();
   final _representativeNameController = TextEditingController();
+  final _representativeIdController = TextEditingController();
   final _representativeAdressController = TextEditingController();
   final _representativeNumberAndEmailController = TextEditingController();
   //
@@ -49,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
   //
   final _textareaTextInput = TextEditingController();
 
-  final List<String> _debtorInfo = [];
   bool checkboxValueForTransition = false;
   bool checkboxValueForProperty = false;
   //
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final headerStyle = const TextStyle(color: Colors.teal, fontSize: 18);
 
-  final storage  = LocalStorage('app');
+  final storage = LocalStorage('app');
   // List<String> userIdentifyInputValues = List.generate(11, (index) => '');
 
   // void updateInputValue(int index, String value) {
@@ -74,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _orgIBanNumberController.dispose();
     _orgAccuntNumberController.dispose();
     _representativeNameController.dispose();
+    _representativeIdController.dispose();
     _representativeAdressController.dispose();
     _representativeNumberAndEmailController.dispose();
     _sumOfAllAmount.dispose();
@@ -84,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _commissionAmount.dispose();
     _apliccationFeeAmount.dispose();
     _foreclosureAmount.dispose();
+
     super.dispose();
   }
 
@@ -116,7 +119,12 @@ class _HomeScreenState extends State<HomeScreen> {
               representativeAdressController: _representativeAdressController,
               representativeNumberAndEmailController:
                   _representativeNumberAndEmailController,
+              representativeIdController: _representativeIdController,
             ),
+            warning
+                ? Text("არასწორი საიდენტიფიკაციო ნომერი",
+                    style: TextStyle(color: Colors.red))
+                : Text(''),
             Center(
               child: Text('ინფორმაცია მოვალის შესახებ', style: headerStyle),
             ),
@@ -216,40 +224,46 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ElevatedButton(
                 onPressed: () async {
                   //debtInputsKey.currentState?.readDataFromControllers();
-                 // print(_textareaTextInput.text);
+                  //debtInputsKey.currentState?.readDataFromControllers();
                   if (_formKey.currentState!.validate()) {
                     setState(() {
                       isLoading = true; // Set loading state
                     });
-                   
 
-                  try {
+                    try {
                       await changeTextContent(
-                        _orgNameController.text,
-                        _orgIdController.text,
-                      );
+                          _orgNameController.text,
+                          _orgIdController.text,
+                          _orgAddressController.text,
+                          debtInputsKey.currentState!.readDataFromControllers(),
+                          _orgPhoneNumberController.text,
+                          _orgIBanNumberController.text,
+                          _orgAccuntNumberController.text,
+                          context
+                          );
 
                       setState(() {
                         isLoading = false; // Unset loading state
                       });
 
-                      QuickAlert.show(
-                        context: context,
-                        type: QuickAlertType.success,
-                      );
+                      // QuickAlert.show(
+                      //   context: context,
+                      //   type: QuickAlertType.success,
+                      // );
 
-                      _orgNameController.clear(); // Clear input
+                      // _orgNameController.clear(); // Clear input
                     } catch (e) {
                       setState(() {
-                        isLoading =
-                            false; // Unset loading state in case of error
+                        isLoading = false;
+                        // Unset loading state in case of error
                       });
                       print('Error: $e');
                       // Handle error or show error alert
                     }
                   }
                 },
-                child: Text(isLoading ? 'Loading...' : 'Generate',style: headerStyle),
+                child: Text(isLoading ? 'Loading...' : 'Generate',
+                    style: headerStyle),
               ),
             ),
           ],
@@ -259,7 +273,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future<void> changeTextContent(String orgName, String orgId) async {
+Future<void> changeTextContent(String orgName, String orgId, String orgAdress,
+    List readDataFromControllers, String orgPhone, String orgIban, String orgAccNum, BuildContext context) async {
   try {
     // Load the template DOCX file
     const f = 'assets/template.docx';
@@ -267,7 +282,53 @@ Future<void> changeTextContent(String orgName, String orgId) async {
         (await rootBundle.load(f)).buffer.asUint8List());
     Content content = Content();
 
-    content.add(TextContent("username", orgName));
+    print(orgAdress);
+    //content logic -----------------------------------------------------------------
+    //set applicant name ------------------------------------------------------------
+    content.add(TextContent("applicantName", orgName));
+    //set applicant id---------------------------------------------------------------
+    void generateTextContentForApplicantId(String id, String contentName) {
+      for (int i = 0; i < id.length; i++) {
+        content.add(TextContent('$contentName$i', id[i]));
+      }
+    }
+    // avoid using wrong numbers of id
+    if (orgId.length == 11 || orgId.length == 9) {
+      generateTextContentForApplicantId(orgId,'applicantId');
+    } else {
+      // ignore: use_build_context_synchronously
+      QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          text: 'საიდენტიფიკაციო კოდი უნდა შედგებოდეს 9/11 სიმბოლოსაგან');
+      return;
+    }
+
+    // set applicant address --------------------------------------------------------
+    content.add(TextContent('orgaddress', orgAdress));
+
+    // set applicant number phone ---------------------------------------------------
+
+    content.add(TextContent('orgnumber', orgPhone));
+
+    // set IBAN code ----------------------------------------------------------------
+
+    content.add(TextContent('orgibancode', orgIban));
+
+    // set Account number -----------------------------------------------------------
+      if(orgAccNum.length == 22){
+        generateTextContentForApplicantId(orgAccNum,'orgaccountnumber');
+      }else{
+        // ignore: use_build_context_synchronously
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          text: 'ანგარიშის ნომერი უნდა შედგებოდეს 22 სიმბოლოსაგან');
+        return;
+      }
+
+    // set debtor info --------------------------------------------------------------
+
     content.add(TextContent("ara", '\u2713'));
 
     // Apply the replacements
@@ -284,7 +345,15 @@ Future<void> changeTextContent(String orgName, String orgId) async {
     // Clean up resources
 
     html.Url.revokeObjectUrl(url);
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.success,
+    );
   } catch (e) {
     print('Error modifying DOCX file: $e');
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.error,
+    );
   }
 }

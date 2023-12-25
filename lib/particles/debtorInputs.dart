@@ -88,11 +88,14 @@ class DebtInputsState extends State<DebtInputs> {
       ],
     );
   }
-    void readDataFromControllers() {
+    List<String> readDataFromControllers() {
+      List<String> enteredNames = [];
     for (TextEditingController controller in _controllers) {
       String text = controller.text;
       //print("Text from controller: $text");
-      print(_controllers[2].text);
+       enteredNames.add(text);
+      print(text);
     }
+    return enteredNames;
   }
 }

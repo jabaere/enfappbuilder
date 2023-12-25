@@ -62,9 +62,8 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/test_template.docx
     - assets/template.docx
-    - assets/test.docx
+   
     
 
   # To add assets to your application, add an assets section, like this:
