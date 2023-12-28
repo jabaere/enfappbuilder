@@ -94,7 +94,7 @@ class DebtInputsState extends State<DebtInputs> {
       String text = controller.text;
       //print("Text from controller: $text");
        enteredNames.add(text);
-      print(text);
+      //print(text);
     }
     return enteredNames;
   }

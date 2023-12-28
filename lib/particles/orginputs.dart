@@ -65,6 +65,7 @@ class OrgInputsState extends State<OrgInputs> {
     await storage.ready;
     setState(() {
       //checkbox data
+      storage.setItem('representator', true);
       saveData = storage.getItem('saveData');
       representative = storage.getItem('representator');
       isRepresentative = representative ?? true;
@@ -136,10 +137,10 @@ class OrgInputsState extends State<OrgInputs> {
                   // Update the checkbox state using the ValueNotifier
 
                   setState(() {
-                    isRepresentative = newValue ?? false;
+                    isRepresentative = newValue ?? true;
                   });
                   storage.setItem('representator', isRepresentative);
-                  print(isRepresentative);
+                  //print(isRepresentative);
                 },
               ),
               const Text('წარმომადგენელი')
@@ -154,7 +155,7 @@ class OrgInputsState extends State<OrgInputs> {
                   setState(() {
                     isSaveCheckboxValue = newValue ?? false;
                   });
-                  print(isSaveCheckboxValue);
+                  //print(isSaveCheckboxValue);
                   storage.setItem('saveData', isSaveCheckboxValue);
                   if (isSaveCheckboxValue == true) {
                     //  storage.setItem('organizationName', widget.orgNameController.text);

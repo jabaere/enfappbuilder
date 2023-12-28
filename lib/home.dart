@@ -239,6 +239,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           _orgPhoneNumberController.text,
                           _orgIBanNumberController.text,
                           _orgAccuntNumberController.text,
+                          _representativeNameController.text,
+                          _representativeAdressController.text,
+                          _representativeIdController.text,
+                          _representativeNumberAndEmailController.text,
+                          checkboxValueForProperty,
+                          checkboxValueForTransition,
+                          _textareaTextInput.text,
+                          _sumOfAllAmount.text,
+                          _principalAmount.text,
+                          _interestAmount.text,
+                          _commissionAmount.text,
+                          _penaltyAmount.text,
+                          _insuranceAmount.text,
+                          _apliccationFeeAmount.text,
+                          _foreclosureAmount.text,
                           context
                           );
 
@@ -273,30 +288,58 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future<void> changeTextContent(String orgName, String orgId, String orgAdress,
-    List readDataFromControllers, String orgPhone, String orgIban, String orgAccNum, BuildContext context) async {
+Future<void> changeTextContent(
+    String orgName,
+    String orgId,
+    String orgAdress,
+    List debtorsData,
+    String orgPhone,
+    String orgIban,
+    String orgAccNum,
+    String representativeName,
+    String representativeAdress,
+    String representativeId,
+    String representativephoneandmeil,
+    bool addProperty,
+    bool transition,
+    String propertyList,
+    String fullAmount,
+    String loanPrincipal,
+    String loanInterest,
+    String comissionFee,
+    String loanPenalty,
+    String insuranceAmount,
+    String applicationFee,
+    String foreclosureFee,
+    BuildContext context
+    ) async {
   try {
-    // Load the template DOCX file
+    var storage = LocalStorage('app');
+    await storage.ready;
+// Load the template DOCX file
     const f = 'assets/template.docx';
     final template = await DocxTemplate.fromBytes(
         (await rootBundle.load(f)).buffer.asUint8List());
     Content content = Content();
 
-    print(orgAdress);
-    //content logic -----------------------------------------------------------------
-    //set applicant name ------------------------------------------------------------
+//content logic -----------------------------------------------------------------
+//set applicant name ------------------------------------------------------------
+
     content.add(TextContent("applicantName", orgName));
-    //set applicant id---------------------------------------------------------------
+
+//set applicant id---------------------------------------------------------------
     void generateTextContentForApplicantId(String id, String contentName) {
       for (int i = 0; i < id.length; i++) {
         content.add(TextContent('$contentName$i', id[i]));
       }
     }
-    // avoid using wrong numbers of id
+
+// avoid using wrong numbers of id -------------------------------------------------------
+
     if (orgId.length == 11 || orgId.length == 9) {
-      generateTextContentForApplicantId(orgId,'applicantId');
+      generateTextContentForApplicantId(orgId, 'applicantId');
     } else {
-      // ignore: use_build_context_synchronously
+// ignore: use_build_context_synchronously
       QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
@@ -304,30 +347,129 @@ Future<void> changeTextContent(String orgName, String orgId, String orgAdress,
       return;
     }
 
-    // set applicant address --------------------------------------------------------
+// set applicant address --------------------------------------------------------
+
     content.add(TextContent('orgaddress', orgAdress));
 
-    // set applicant number phone ---------------------------------------------------
+// set applicant number phone ---------------------------------------------------
 
     content.add(TextContent('orgnumber', orgPhone));
 
-    // set IBAN code ----------------------------------------------------------------
+// set IBAN code ----------------------------------------------------------------
 
     content.add(TextContent('orgibancode', orgIban));
 
-    // set Account number -----------------------------------------------------------
-      if(orgAccNum.length == 22){
-        generateTextContentForApplicantId(orgAccNum,'orgaccountnumber');
-      }else{
-        // ignore: use_build_context_synchronously
-        QuickAlert.show(
+// set Account number -----------------------------------------------------------
+
+    if (orgAccNum.length == 22) {
+      generateTextContentForApplicantId(orgAccNum, 'orgaccountnumber');
+    } else {
+      // ignore: use_build_context_synchronously
+      QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
           text: 'ანგარიშის ნომერი უნდა შედგებოდეს 22 სიმბოლოსაგან');
+      return;
+    }
+// set representative name
+
+    if (storage.getItem('representator') == true) {
+      content.add(TextContent('representativename', representativeName));
+      print(representativeId.length);
+      if (representativeId.length != 11) {
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            text: 'საიდენტიფიკაციო კოდი უნდა შედგებოდეს 11 სიმბოლოსაგან');
         return;
       }
+      generateTextContentForApplicantId(
+          representativeId, 'representativeidnumber');
 
-    // set debtor info --------------------------------------------------------------
+// set address ----------------------------------------------------------------
+
+      content.add(TextContent('representativeaddress', representativeAdress));
+      content.add(TextContent(
+          'representativephoneandemail', representativephoneandmeil));
+    }
+
+// set conditions -------------------------------------------------------------
+
+    if (debtorsData.length > 1) {
+      content.add(TextContent('solidarydemantNo', '\u2713'));
+      content.add(TextContent('severalLiabilityYes', '\u2713'));
+    } else {
+      content.add(TextContent('solidarydemantNo', '\u2713'));
+      content.add(TextContent('severalLiabilityNo', '\u2713'));
+    }
+
+//  -------------------------------------------------------------
+
+    content.add(TextContent('reciprocalbligationNo', '\u2713'));
+
+//  -------------------------------------------------------------
+    if (addProperty == true) {
+      content.add(TextContent('tobeenforcedYes', '\u2713'));
+      content.add(TextContent('foreclosureYes', '\u2713'));
+// property list
+      content.add(PlainContent('propertyList')..add(TextContent('property', propertyList)));
+    } else {
+      //content.add(TextContent('tobeenforcedNo', '\u2713'));
+      content.add(TextContent('foreclosureNo', '\u2713'));
+    }
+//
+    if (transition == true) {
+      content.add(TextContent('tobeenforcedYes', '\u2713'));
+    } else {
+      content.add(TextContent('tobeenforcedNo', '\u2713'));
+    }
+
+// set loan full amount
+    content.add(TextContent('requestSum', fullAmount));
+// set loan principal
+    content.add(TextContent('loanPrincipal', loanPrincipal));
+
+// set loan interest and comission fee
+    content.add(TextContent('loanInterest', loanInterest));
+    int.parse(comissionFee) != 0 ?
+    content.add(TextContent('IssuanceFee', comissionFee))
+    :
+    content.add(TextContent('IssuanceFee', ''));
+// set loan penalty and insurance fee
+   content.add(TextContent('loanPenalty', loanPenalty));
+   content.add(TextContent('insuranceCommission', insuranceAmount));
+// set application fee
+    
+   content.add(TextContent('applicationFee', applicationFee));
+  
+
+// set foreclosure fee
+   content.add(TextContent('foreclosureFee', foreclosureFee));
+
+// application creation time  ---------------------------------------------------
+
+    DateTime now = DateTime.now();
+    String formattedDate =
+        '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}';
+    content.add(TextContent('writeDate', formattedDate));
+
+//
+
+// set debtor info --------------------------------------------------------------
+
+    List<Content> localContent = [];
+
+// Loop through debtorsData and add each element as separate content
+
+    for (int j = 0; j < debtorsData.length; j++) {
+      var e = debtorsData[j];
+      localContent.add(TextContent('debtor', e));
+    }
+//  Add a list to the view.
+
+    content.add(ListContent("debtorList", localContent));
+
+//   
 
     content.add(TextContent("ara", '\u2713'));
 
