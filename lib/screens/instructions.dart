@@ -9,9 +9,7 @@ class InstructionsScreen extends StatelessWidget {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.grey[200])
       ),
-      body: Container(
-        child: const Text('instrucions'),
-      ),
+      body: const Text('instrucions'),
     );
   }
 }

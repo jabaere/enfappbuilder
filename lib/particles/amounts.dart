@@ -96,7 +96,9 @@ class _AmountsState extends State<Amounts> {
               fillColor: const Color.fromARGB(255, 240, 235, 235),
             ),
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+               inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')), // Allow only digits
+              ],
             textInputAction: TextInputAction.done,
             validator: (value) {
               if (value == null || value.isEmpty) {

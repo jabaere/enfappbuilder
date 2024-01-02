@@ -1,5 +1,5 @@
 import 'package:applicationbuilder/particles/amounts.dart';
-import 'package:applicationbuilder/particles/debtorInputs.dart';
+import 'package:applicationbuilder/particles/debtor_inputs.dart';
 import 'package:applicationbuilder/particles/orginputs.dart';
 import 'package:docx_template/docx_template.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +20,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   double btnWidt = 250;
   double btnHeight = 52;
 
@@ -378,7 +378,7 @@ Future<void> changeTextContent({
 
     if (storage.getItem('representator') == true) {
       content.add(TextContent('representativename', representativeName));
-      print(representativeId.length);
+      //print(representativeId.length);
       if (representativeId.length != 11) {
         // ignore: use_build_context_synchronously
         QuickAlert.show(
@@ -447,7 +447,7 @@ Future<void> changeTextContent({
     :
     content.add(TextContent('loanInterest', ''));
     comissionFee != '0' ?
-    content.add(TextContent('IssuanceFee', '$comissionFee ლარი'))
+    content.add(TextContent('IssuanceFee', 'საკომისიო $comissionFee ლარი'))
     :
     content.add(TextContent('IssuanceFee', ''));
 // set loan penalty and insurance fee

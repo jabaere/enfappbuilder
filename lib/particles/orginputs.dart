@@ -117,7 +117,7 @@ class OrgInputsState extends State<OrgInputs> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    //final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600; // Adjust this breakpoint as needed
 

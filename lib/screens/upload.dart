@@ -5,10 +5,10 @@ class UploadScreen extends StatefulWidget {
   const UploadScreen({super.key});
 
   @override
-  _UploadScreenState createState() => _UploadScreenState();
+  UploadScreenState createState() => UploadScreenState();
 }
 
-class _UploadScreenState extends State<UploadScreen> {
+class UploadScreenState extends State<UploadScreen> {
   String? _filePath; // Stores the selected file path
 
   void _pickFile() {
