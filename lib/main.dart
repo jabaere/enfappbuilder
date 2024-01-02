@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: colorScheme.onSurfaceVariant,
         ),
       ),
-      home: const MyHomePage(title: 'აპლიკაციის/გადახდების გენერაცია'),
+      home: const MyHomePage(title: 'აპლიკაციის გენერირება'),
     );
   }
 }
