@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 28),
                 child: Text(
-                  'ინფორმაცია აპლიკანტის შესახებ',
+                  'აპლიკანტი',
                   style: headerStyle,
                 ),
               ),
@@ -122,11 +122,11 @@ class _HomeScreenState extends State<HomeScreen> {
               representativeIdController: _representativeIdController,
             ),
             warning
-                ? Text("არასწორი საიდენტიფიკაციო ნომერი",
+                ? const Text("არასწორი საიდენტიფიკაციო ნომერი",
                     style: TextStyle(color: Colors.red))
-                : Text(''),
+                : const Text(''),
             Center(
-              child: Text('ინფორმაცია მოვალის შესახებ', style: headerStyle),
+              child: Text('მოვალე', style: headerStyle),
             ),
             DebtInputs(key: debtInputsKey),
 
@@ -159,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           setState(() {
                             checkboxValueForProperty = newValue ?? false;
+                            checkboxValueForTransition = newValue ?? false;
                           });
                         },
                       ),
@@ -172,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 28),
-                child: Text('ინფორმაცია თანხებზე', style: headerStyle),
+                child: Text('თანხები', style: headerStyle),
               ),
             ),
             Amounts(
@@ -192,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.all(28.0),
                       child: Column(
                         children: [
-                          Text('ინფორმაცია ქონებაზე', style: headerStyle),
+                          Text('ქონება', style: headerStyle),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 16.0,
@@ -232,29 +233,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     try {
                       await changeTextContent(
-                          _orgNameController.text,
-                          _orgIdController.text,
-                          _orgAddressController.text,
-                          debtInputsKey.currentState!.readDataFromControllers(),
-                          _orgPhoneNumberController.text,
-                          _orgIBanNumberController.text,
-                          _orgAccuntNumberController.text,
-                          _representativeNameController.text,
-                          _representativeAdressController.text,
-                          _representativeIdController.text,
-                          _representativeNumberAndEmailController.text,
-                          checkboxValueForProperty,
-                          checkboxValueForTransition,
-                          _textareaTextInput.text,
-                          _sumOfAllAmount.text,
-                          _principalAmount.text,
-                          _interestAmount.text,
-                          _commissionAmount.text,
-                          _penaltyAmount.text,
-                          _insuranceAmount.text,
-                          _apliccationFeeAmount.text,
-                          _foreclosureAmount.text,
-                          context
+                          orgName:_orgNameController.text,
+                          orgId:_orgIdController.text,
+                          orgAdress:_orgAddressController.text,
+                          debtorsData:debtInputsKey.currentState!.readDataFromControllers(),
+                          orgPhone:_orgPhoneNumberController.text,
+                          orgIban:_orgIBanNumberController.text,
+                          orgAccNum:_orgAccuntNumberController.text,
+                          representativeName:_representativeNameController.text,
+                          representativeAdress:_representativeAdressController.text,
+                          representativeId:_representativeIdController.text,
+                          representativephoneandmeil:_representativeNumberAndEmailController.text,
+                          addProperty:checkboxValueForProperty,
+                          transition:checkboxValueForTransition,
+                          propertyList:_textareaTextInput.text,
+                          fullAmount:_sumOfAllAmount.text,
+                          loanPrincipal:_principalAmount.text,
+                          loanInterest:_interestAmount.text,
+                          comissionFee:_commissionAmount.text,
+                          loanPenalty:_penaltyAmount.text,
+                          insuranceAmount:_insuranceAmount.text,
+                          applicationFee:_apliccationFeeAmount.text,
+                          foreclosureFee:_foreclosureAmount.text,
+                          context: context
                           );
 
                       setState(() {
@@ -288,34 +289,36 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future<void> changeTextContent(
-    String orgName,
-    String orgId,
-    String orgAdress,
-    List debtorsData,
-    String orgPhone,
-    String orgIban,
-    String orgAccNum,
-    String representativeName,
-    String representativeAdress,
-    String representativeId,
-    String representativephoneandmeil,
-    bool addProperty,
-    bool transition,
-    String propertyList,
-    String fullAmount,
-    String loanPrincipal,
-    String loanInterest,
-    String comissionFee,
-    String loanPenalty,
-    String insuranceAmount,
-    String applicationFee,
-    String foreclosureFee,
-    BuildContext context
-    ) async {
+Future<void> changeTextContent({
+    required String orgName,
+    required String orgId,
+    required String orgAdress,
+    required List debtorsData,
+    required String orgPhone,
+    required String orgIban,
+    required String orgAccNum,
+    required String representativeName,
+    required String representativeAdress,
+    required String representativeId,
+    required String representativephoneandmeil,
+    required bool addProperty,
+    required bool transition,
+    required String propertyList,
+    required String fullAmount,
+    required String loanPrincipal,
+             String loanInterest = '0',
+             String comissionFee = '0',
+             String loanPenalty  = '0',
+             String insuranceAmount = '0',
+    required String applicationFee,
+    required String foreclosureFee,
+    required BuildContext context
+    }) async {
   try {
     var storage = LocalStorage('app');
     await storage.ready;
+//  debtor name
+    var debtorName = 'generated';
 // Load the template DOCX file
     const f = 'assets/template.docx';
     final template = await DocxTemplate.fromBytes(
@@ -377,6 +380,7 @@ Future<void> changeTextContent(
       content.add(TextContent('representativename', representativeName));
       print(representativeId.length);
       if (representativeId.length != 11) {
+        // ignore: use_build_context_synchronously
         QuickAlert.show(
             context: context,
             type: QuickAlertType.error,
@@ -412,7 +416,15 @@ Future<void> changeTextContent(
       content.add(TextContent('tobeenforcedYes', '\u2713'));
       content.add(TextContent('foreclosureYes', '\u2713'));
 // property list
-      content.add(PlainContent('propertyList')..add(TextContent('property', propertyList)));
+      List <Content> list  = [];
+      propertyList.split('\n').forEach((element) {list.add(
+        PlainContent("multilinePlain")
+        ..add(TextContent('multilineText', element)),
+
+       );
+      });
+   
+      content.add(ListContent('multilineList',list));
     } else {
       //content.add(TextContent('tobeenforcedNo', '\u2713'));
       content.add(TextContent('foreclosureNo', '\u2713'));
@@ -425,26 +437,35 @@ Future<void> changeTextContent(
     }
 
 // set loan full amount
-    content.add(TextContent('requestSum', fullAmount));
+    content.add(TextContent('requestSum', '$fullAmount ლარი'));
 // set loan principal
-    content.add(TextContent('loanPrincipal', loanPrincipal));
+    content.add(TextContent('loanPrincipal', '$loanPrincipal ლარი'));
 
 // set loan interest and comission fee
-    content.add(TextContent('loanInterest', loanInterest));
-    int.parse(comissionFee) != 0 ?
-    content.add(TextContent('IssuanceFee', comissionFee))
+    loanInterest != '0' ?
+    content.add(TextContent('loanInterest', 'საკომისიო $loanInterest ლარი'))
+    :
+    content.add(TextContent('loanInterest', ''));
+    comissionFee != '0' ?
+    content.add(TextContent('IssuanceFee', '$comissionFee ლარი'))
     :
     content.add(TextContent('IssuanceFee', ''));
 // set loan penalty and insurance fee
-   content.add(TextContent('loanPenalty', loanPenalty));
-   content.add(TextContent('insuranceCommission', insuranceAmount));
+   if(loanPenalty != '0' || insuranceAmount != '0'){
+     content.add(TextContent('loanPenalty', '$loanPenalty ლარი'));
+     content.add(TextContent('insuranceCommission', 'სიცოცხლის დაზღვევა - $insuranceAmount ლარი'));
+   }else{
+     content.add(TextContent('loanPenalty', ''));
+     content.add(TextContent('insuranceCommission', ''));
+   }
+  
 // set application fee
     
-   content.add(TextContent('applicationFee', applicationFee));
+   content.add(TextContent('applicationFee', 'სააპლიკაციო საფასური - $applicationFee ლარი'));
   
 
 // set foreclosure fee
-   content.add(TextContent('foreclosureFee', foreclosureFee));
+   content.add(TextContent('foreclosureFee', 'ყადაღის რეგისტრაციის საფასური - $foreclosureFee ლარი'));
 
 // application creation time  ---------------------------------------------------
 
@@ -470,8 +491,10 @@ Future<void> changeTextContent(
     content.add(ListContent("debtorList", localContent));
 
 //   
-
-    content.add(TextContent("ara", '\u2713'));
+    if( debtorsData.isNotEmpty && debtorsData[0].contains('პ/ნ') || debtorsData[0].contains('პ.ნ') || debtorsData[0].contains('პნ')){
+      String name = debtorsData[0].substring(0, debtorsData[0].indexOf('პ/ნ'));
+      debtorName = name;
+      }
 
     // Apply the replacements
     final modifiedDocxBytes = await template.generate(content);
@@ -481,7 +504,7 @@ Future<void> changeTextContent(
         [Uint8List.fromList(modifiedDocxBytes!)], 'application/msword');
     final url = html.Url.createObjectUrlFromBlob(blob);
     final anchor = html.AnchorElement(href: url)
-      ..setAttribute("download", "generated.docx")
+      ..setAttribute("download", "აპლიკაცია $debtorName.docx")
       ..click();
 
     // Clean up resources

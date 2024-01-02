@@ -1,5 +1,6 @@
 import 'package:applicationbuilder/home.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Amounts extends StatefulWidget {
   final TextEditingController sumOfAllAmount;
@@ -94,7 +95,8 @@ class _AmountsState extends State<Amounts> {
               filled: true,
               fillColor: const Color.fromARGB(255, 240, 235, 235),
             ),
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             textInputAction: TextInputAction.done,
             validator: (value) {
               if (value == null || value.isEmpty) {
