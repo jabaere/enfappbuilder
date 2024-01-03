@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.integration_instructions),
+            icon: const Icon(Icons.priority_high_outlined),
             color: Colors.grey[200],
             onPressed: () {
               Navigator.of(context).push(_createRoute(const InstructionsScreen()));
