@@ -39,6 +39,7 @@ dependencies:
   universal_html: ^2.2.4
   quickalert: ^1.0.2
   localstorage: ^4.0.1+4
+  syncfusion_flutter_pdf: ^24.1.44
 
 dev_dependencies:
   flutter_test:
