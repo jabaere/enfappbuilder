@@ -90,12 +90,6 @@ ${amounts[1]} ლარი - სააპლიკაციო საფას�
         });
       }
 
-      //   print(appNum);
-      print(appNum);
-      print(identificationCode);
-      print(amounts);
-      print(names);
-      print(names.length);
 
       document.dispose();
     });
@@ -188,44 +182,46 @@ ${amounts[1]} ლარი - სააპლიკაციო საფას�
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(iconTheme: IconThemeData(color: Colors.grey[200])),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(48.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: _pickFile,
-                    icon: const Icon(Icons.upload),
-                    label: const Text('Select File'),
-                  ),
-                  if (_filePath != null)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('File Name: $_filePath'),
-                    ),
-                ],
-              ),
-              SizedBox(width: 30),
-              if (output.isNotEmpty)
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(48.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(output,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.green[400],
-                        )),
                     ElevatedButton.icon(
-                      onPressed: copyOutput,
-                      icon: const Icon(Icons.copy_all),
-                      label: const Text('Copy'),
+                      onPressed: _pickFile,
+                      icon: const Icon(Icons.upload),
+                      label: const Text('აირჩიეთ რეკვიზიტი'),
                     ),
+                    if (_filePath != null)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('File Name: $_filePath'),
+                      ),
                   ],
                 ),
-            ],
+                SizedBox(width: 30),
+                if (output.isNotEmpty)
+                  Column(
+                    children: [
+                      Text(output,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.green[400],
+                          )),
+                      ElevatedButton.icon(
+                        onPressed: copyOutput,
+                        icon: const Icon(Icons.copy_all),
+                        label: const Text('Copy'),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
           ),
         ),
       ),
