@@ -1,3 +1,4 @@
+import 'package:applicationbuilder/screens/about.dart';
 import 'package:applicationbuilder/screens/instructions.dart';
 import 'package:flutter/material.dart';
 import 'package:applicationbuilder/home.dart';
@@ -51,8 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (_selectedIndex) {
       case 0:
         return const HomeScreen();
-      case 1:
-        return const UploadScreen();
+      // case 1:
+      //   return const UploadScreen();
+      // case 2:
+      //   return const About();
       default:
         throw UnimplementedError("Page not found");
     }
@@ -90,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         
-        title: Center(child: Text(widget.title,style: TextStyle(color: colorScheme.surfaceVariant),)),
+        title: Text(widget.title,style: TextStyle(color: colorScheme.surfaceVariant),),
         actions: <Widget>[
           // IconButton(
           //   icon: const Icon(Icons.access_time),
@@ -106,10 +109,17 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.priority_high_outlined),
+            icon: const Icon(Icons.warning_amber_rounded),
             color: Colors.grey[200],
             onPressed: () {
               Navigator.of(context).push(_createRoute(InstructionsScreen()));
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.segment_sharp),
+            color: Colors.grey[200],
+            onPressed: () {
+              Navigator.of(context).push(_createRoute(const About()));
             },
           ),
         ],
