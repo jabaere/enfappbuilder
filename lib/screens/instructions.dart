@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class InstructionsScreen extends StatelessWidget {
   final headerStyle = const TextStyle(color: Colors.teal, fontSize: 18);
+
+  const InstructionsScreen({super.key});
  
 
   @override
@@ -82,7 +84,7 @@ class InstructionsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title, style: headerStyle),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: about.map((item) => Text(item)).toList(),
@@ -97,11 +99,5 @@ class InstructionsScreen extends StatelessWidget {
 }
 
 
-//bold text
 
-  Widget buildTextWithBoldMarkers(String text) {
-  
-   return Text(text,style: TextStyle(color: Colors.green),);
-   
-  }
 

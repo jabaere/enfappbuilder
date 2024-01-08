@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.warning_amber_rounded),
             color: Colors.grey[200],
             onPressed: () {
-              Navigator.of(context).push(_createRoute(InstructionsScreen()));
+              Navigator.of(context).push(_createRoute(const InstructionsScreen()));
             },
           ),
           IconButton(

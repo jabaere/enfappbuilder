@@ -515,12 +515,14 @@ Future<void> changeTextContent({
     // Clean up resources
 
     html.Url.revokeObjectUrl(url);
+    // ignore: use_build_context_synchronously
     QuickAlert.show(
       context: context,
       type: QuickAlertType.success,
     );
   } catch (e) {
     print('Error modifying DOCX file: $e');
+    // ignore: use_build_context_synchronously
     QuickAlert.show(
       context: context,
       type: QuickAlertType.error,
