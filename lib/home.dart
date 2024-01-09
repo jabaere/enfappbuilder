@@ -314,11 +314,13 @@ Future<void> changeTextContent({
     required String foreclosureFee,
     required BuildContext context
     }) async {
+       
   try {
     var storage = LocalStorage('app');
     await storage.ready;
 //  debtor name
     var debtorName = 'generated';
+   
 // Load the template DOCX file
     const f = 'assets/template.docx';
     final template = await DocxTemplate.fromBytes(
@@ -437,7 +439,19 @@ Future<void> changeTextContent({
     }
 
 // set loan full amount
-    content.add(TextContent('requestSum', '$fullAmount ლარი'));
+  
+  
+   
+    content.add(TextContent('requestSum', '${ 
+     (double.parse(loanPrincipal) + 
+     double.parse(loanInterest) + 
+     double.parse(comissionFee) +
+     double.parse(loanPenalty) + 
+     double.parse(insuranceAmount) + 
+     double.parse(applicationFee)).toStringAsFixed(2)
+     } ლარი'));
+    
+    //print(double.parse(loanPrincipal) + double.parse(loanInterest));
 // set loan principal
     content.add(TextContent('loanPrincipal', '$loanPrincipal ლარი'));
 

@@ -57,8 +57,8 @@ class _AmountsState extends State<Amounts> {
     List<Widget> _buildTwoRowsFormFields() {
     return [
    
-      _buildField(
-          'სრული მოთხოვნა', widget.sumOfAllAmount),
+      // _buildField(
+      //     'სრული მოთხოვნა', widget.sumOfAllAmount),
       _buildField(
           'ძირი', widget.principalAmount),
     _buildField(
