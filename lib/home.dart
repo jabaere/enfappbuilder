@@ -441,10 +441,15 @@ Future<void> changeTextContent(
 
 // set loan full amount
 
-    if (loanInterest.startsWith('0') && loanInterest.length > 1 ||
+    if (
+        loanPrincipal.startsWith('0') && loanPrincipal.length > 1 ||
+        loanInterest.startsWith('0') && loanInterest.length > 1 ||
         comissionFee.startsWith('0') && comissionFee.length > 1 ||
         loanPenalty.startsWith('0') && loanPenalty.length > 1 ||
-        insuranceAmount.startsWith('0') && insuranceAmount.length > 1) {
+        insuranceAmount.startsWith('0') && insuranceAmount.length > 1 ||
+        applicationFee.startsWith('0') && applicationFee.length > 1 || 
+        addProperty == true && foreclosureFee.startsWith('0') && foreclosureFee.length > 1
+        ) {
       // ignore: use_build_context_synchronously
       QuickAlert.show(
           context: context,
@@ -453,7 +458,7 @@ Future<void> changeTextContent(
       return;
     } else {
       content.add(TextContent('requestSum',
-          '${(double.parse(loanPrincipal) + double.parse(loanInterest) + double.parse(comissionFee) + double.parse(loanPenalty) + double.parse(insuranceAmount) + double.parse(applicationFee)).toStringAsFixed(2)} ლარი'));
+          '${(double.parse(loanPrincipal) + double.parse(loanInterest) + double.parse(comissionFee) + double.parse(loanPenalty) + double.parse(insuranceAmount) + double.parse(applicationFee)+ double.parse(addProperty == true ? foreclosureFee : '0')).toStringAsFixed(2)} ლარი'));
     }
 
 // set loan principal
