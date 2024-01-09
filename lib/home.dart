@@ -233,30 +233,33 @@ class HomeScreenState extends State<HomeScreen> {
 
                     try {
                       await changeTextContent(
-                          orgName:_orgNameController.text,
-                          orgId:_orgIdController.text,
-                          orgAdress:_orgAddressController.text,
-                          debtorsData:debtInputsKey.currentState!.readDataFromControllers(),
-                          orgPhone:_orgPhoneNumberController.text,
-                          orgIban:_orgIBanNumberController.text,
-                          orgAccNum:_orgAccuntNumberController.text,
-                          representativeName:_representativeNameController.text,
-                          representativeAdress:_representativeAdressController.text,
-                          representativeId:_representativeIdController.text,
-                          representativephoneandmeil:_representativeNumberAndEmailController.text,
-                          addProperty:checkboxValueForProperty,
-                          transition:checkboxValueForTransition,
-                          propertyList:_textareaTextInput.text,
-                          fullAmount:_sumOfAllAmount.text,
-                          loanPrincipal:_principalAmount.text,
-                          loanInterest:_interestAmount.text,
-                          comissionFee:_commissionAmount.text,
-                          loanPenalty:_penaltyAmount.text,
-                          insuranceAmount:_insuranceAmount.text,
-                          applicationFee:_apliccationFeeAmount.text,
-                          foreclosureFee:_foreclosureAmount.text,
-                          context: context
-                          );
+                          orgName: _orgNameController.text,
+                          orgId: _orgIdController.text,
+                          orgAdress: _orgAddressController.text,
+                          debtorsData: debtInputsKey.currentState!
+                              .readDataFromControllers(),
+                          orgPhone: _orgPhoneNumberController.text,
+                          orgIban: _orgIBanNumberController.text,
+                          orgAccNum: _orgAccuntNumberController.text,
+                          representativeName:
+                              _representativeNameController.text,
+                          representativeAdress:
+                              _representativeAdressController.text,
+                          representativeId: _representativeIdController.text,
+                          representativephoneandmeil:
+                              _representativeNumberAndEmailController.text,
+                          addProperty: checkboxValueForProperty,
+                          transition: checkboxValueForTransition,
+                          propertyList: _textareaTextInput.text,
+                          fullAmount: _sumOfAllAmount.text,
+                          loanPrincipal: _principalAmount.text,
+                          loanInterest: _interestAmount.text,
+                          comissionFee: _commissionAmount.text,
+                          loanPenalty: _penaltyAmount.text,
+                          insuranceAmount: _insuranceAmount.text,
+                          applicationFee: _apliccationFeeAmount.text,
+                          foreclosureFee: _foreclosureAmount.text,
+                          context: context);
 
                       setState(() {
                         isLoading = false; // Unset loading state
@@ -289,8 +292,8 @@ class HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future<void> changeTextContent({
-    required String orgName,
+Future<void> changeTextContent(
+    {required String orgName,
     required String orgId,
     required String orgAdress,
     required List debtorsData,
@@ -306,21 +309,19 @@ Future<void> changeTextContent({
     required String propertyList,
     required String fullAmount,
     required String loanPrincipal,
-             String loanInterest = '0',
-             String comissionFee = '0',
-             String loanPenalty  = '0',
-             String insuranceAmount = '0',
+    String loanInterest = '0',
+    String comissionFee = '0',
+    String loanPenalty = '0',
+    String insuranceAmount = '0',
     required String applicationFee,
     required String foreclosureFee,
-    required BuildContext context
-    }) async {
-       
+    required BuildContext context}) async {
   try {
     var storage = LocalStorage('app');
     await storage.ready;
 //  debtor name
     var debtorName = 'generated';
-   
+
 // Load the template DOCX file
     const f = 'assets/template.docx';
     final template = await DocxTemplate.fromBytes(
@@ -418,15 +419,15 @@ Future<void> changeTextContent({
       content.add(TextContent('tobeenforcedYes', ' \u2713  '));
       content.add(TextContent('foreclosureYes', ' \u2713  '));
 // property list
-      List <Content> list  = [];
-      propertyList.split('\n').forEach((element) {list.add(
-        PlainContent("multilinePlain")
-        ..add(TextContent('multilineText', element)),
-
-       );
+      List<Content> list = [];
+      propertyList.split('\n').forEach((element) {
+        list.add(
+          PlainContent("multilinePlain")
+            ..add(TextContent('multilineText', element)),
+        );
       });
-   
-      content.add(ListContent('multilineList',list));
+
+      content.add(ListContent('multilineList', list));
     } else {
       //content.add(TextContent('tobeenforcedNo', '\u2713'));
       content.add(TextContent('foreclosureNo', ' \u2713  '));
@@ -439,52 +440,59 @@ Future<void> changeTextContent({
     }
 
 // set loan full amount
-  
-  
-   
-    content.add(TextContent('requestSum', '${ 
-     (double.parse(loanPrincipal) + 
-     double.parse(loanInterest) + 
-     double.parse(comissionFee) +
-     double.parse(loanPenalty) + 
-     double.parse(insuranceAmount) + 
-     double.parse(applicationFee)).toStringAsFixed(2)
-     } ლარი'));
-    
-    //print(double.parse(loanPrincipal) + double.parse(loanInterest));
+
+    if (loanInterest.startsWith('0') && loanInterest.length > 1 ||
+        comissionFee.startsWith('0') && comissionFee.length > 1 ||
+        loanPenalty.startsWith('0') && loanPenalty.length > 1 ||
+        insuranceAmount.startsWith('0') && insuranceAmount.length > 1) {
+      // ignore: use_build_context_synchronously
+      QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          text: 'არასწორი რიცხვი');
+      return;
+    } else {
+      content.add(TextContent('requestSum',
+          '${(double.parse(loanPrincipal) + double.parse(loanInterest) + double.parse(comissionFee) + double.parse(loanPenalty) + double.parse(insuranceAmount) + double.parse(applicationFee)).toStringAsFixed(2)} ლარი'));
+    }
+
 // set loan principal
     content.add(TextContent('loanPrincipal', '$loanPrincipal ლარი'));
 
 // set loan interest and comission fee
-    loanInterest != '0' ?
-    content.add(TextContent('loanInterest', '$loanInterest ლარი'))
-    :
-    content.add(TextContent('loanInterest', ''));
-    comissionFee != '0' ?
-    content.add(TextContent('IssuanceFee', 'საკომისიო $comissionFee ლარი'))
-    :
-    content.add(TextContent('IssuanceFee', ''));
+    !loanInterest.startsWith('0')
+        ? content.add(TextContent('loanInterest', '$loanInterest ლარი'))
+        : content.add(TextContent('loanInterest', ''));
+    !comissionFee.startsWith('0')
+        ? content
+            .add(TextContent('IssuanceFee', 'საკომისიო $comissionFee ლარი'))
+        : content.add(TextContent('IssuanceFee', ''));
 // set loan penalty and insurance fee
-   if(loanPenalty != '0' || insuranceAmount != '0'){
-     content.add(TextContent('loanPenalty', '$loanPenalty ლარი'));
-     content.add(TextContent('insuranceCommission', 'სიცოცხლის დაზღვევა - $insuranceAmount ლარი'));
-   }else{
-     content.add(TextContent('loanPenalty', ''));
-     content.add(TextContent('insuranceCommission', ''));
-   }
-  
+    if (!loanPenalty.startsWith('0')) {
+      content.add(TextContent('loanPenalty', '$loanPenalty ლარი'));
+    } else {
+      content.add(TextContent('loanPenalty', ''));
+    }
+
+    if (!insuranceAmount.startsWith('0')) {
+      content.add(TextContent(
+          'insuranceCommission', 'სიცოცხლის დაზღვევა - $insuranceAmount ლარი'));
+    } else {
+      content.add(TextContent('insuranceCommission', ''));
+    }
+
 // set application fee
-    
-   content.add(TextContent('applicationFee', 'სააპლიკაციო საფასური - $applicationFee ლარი'));
-  
+
+    content.add(TextContent(
+        'applicationFee', 'სააპლიკაციო საფასური - $applicationFee ლარი'));
 
 // set foreclosure fee
-   if(addProperty == true){
-     content.add(TextContent('foreclosureFee', 'ყადაღის რეგისტრაციის საფასური - $foreclosureFee ლარი'));
-   }else{
-     content.add(TextContent('foreclosureFee', ''));
-   }
-
+    if (addProperty == true) {
+      content.add(TextContent('foreclosureFee',
+          'ყადაღის რეგისტრაციის საფასური - $foreclosureFee ლარი'));
+    } else {
+      content.add(TextContent('foreclosureFee', ''));
+    }
 
 // application creation time  ---------------------------------------------------
 
@@ -509,11 +517,13 @@ Future<void> changeTextContent({
 
     content.add(ListContent("debtorList", localContent));
 
-//   
-    if( debtorsData.isNotEmpty && debtorsData[0].contains('პ/ნ') || debtorsData[0].contains('პ.ნ') || debtorsData[0].contains('პნ')){
+//
+    if (debtorsData.isNotEmpty && debtorsData[0].contains('პ/ნ') ||
+        debtorsData[0].contains('პ.ნ') ||
+        debtorsData[0].contains('პნ')) {
       String name = debtorsData[0].substring(0, debtorsData[0].indexOf('პ/ნ'));
       debtorName = name;
-      }
+    }
 
     // Apply the replacements
     final modifiedDocxBytes = await template.generate(content);
