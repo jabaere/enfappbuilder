@@ -10,19 +10,19 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-
+  // Simulating fetching data asynchronously
+  Future<void> fetchData() {
+    return Future.delayed(const Duration(seconds: 2));
+  }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return MaterialApp(
-     
-       debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       //  debugShowMaterialGrid: true,
       title: 'Applicationbuilder',
       theme: ThemeData(
-        
         colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: colorScheme.onSurfaceVariant,
           background: colorScheme.background,
@@ -31,14 +31,15 @@ class MyApp extends StatelessWidget {
           backgroundColor: colorScheme.onSurfaceVariant,
         ),
       ),
-      home: const MyHomePage(title: 'აპლიკაციის გენერირება'),
+      home: MyHomePage(title: 'აპლიკაციის გენერირება', fetchData: fetchData),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
+  const MyHomePage({Key? key, required this.title, required this.fetchData})
+      : super(key: key);
+  final Future<void> Function() fetchData;
   final String title;
 
   @override
@@ -47,7 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final int _selectedIndex = 0;
-
+  bool isLoading = true;
   Widget getPage() {
     switch (_selectedIndex) {
       case 0:
@@ -65,9 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(-1.0, 0.0);
+        const begin = Offset(-2.0, 0.0);
         const end = Offset.zero;
-        const curve = Curves.easeInOut;
+        const curve = Curves.bounceInOut;
 
         var tween = Tween(begin: begin, end: end).chain(
           CurveTween(curve: curve),
@@ -81,6 +82,19 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    await widget.fetchData();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   // void _navigateToScreen(int index) {
   //   setState(() {
   //     _selectedIndex = index;
@@ -92,8 +106,10 @@ class _MyHomePageState extends State<MyHomePage> {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        
-        title: Text(widget.title,style: TextStyle(color: colorScheme.surfaceVariant),),
+        title: Text(
+          widget.title,
+          style: TextStyle(color: colorScheme.surfaceVariant),
+        ),
         actions: <Widget>[
           // IconButton(
           //   icon: const Icon(Icons.access_time),
@@ -112,7 +128,8 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.warning_amber_rounded),
             color: Colors.grey[200],
             onPressed: () {
-              Navigator.of(context).push(_createRoute(const InstructionsScreen()));
+              Navigator.of(context)
+                  .push(_createRoute(const InstructionsScreen()));
             },
           ),
           IconButton(
@@ -126,7 +143,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(
         color: Colors.transparent,
-        child: getPage(),
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(color: Colors.teal,),
+              )
+            : getPage(),
       ),
     );
   }

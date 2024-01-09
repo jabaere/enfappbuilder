@@ -400,21 +400,21 @@ Future<void> changeTextContent({
 // set conditions -------------------------------------------------------------
 
     if (debtorsData.length > 1) {
-      content.add(TextContent('solidarydemantNo', ' \u2713 '));
-      content.add(TextContent('severalLiabilityYes', ' \u2713 '));
+      content.add(TextContent('solidarydemantNo', ' \u2713  '));
+      content.add(TextContent('severalLiabilityYes', ' \u2713  '));
     } else {
-      content.add(TextContent('solidarydemantNo', ' \u2713 '));
-      content.add(TextContent('severalLiabilityNo', ' \u2713 '));
+      content.add(TextContent('solidarydemantNo', ' \u2713  '));
+      content.add(TextContent('severalLiabilityNo', ' \u2713  '));
     }
 
 //  -------------------------------------------------------------
 
-    content.add(TextContent('reciprocalbligationNo', ' \u2713 '));
+    content.add(TextContent('reciprocalbligationNo', ' \u2713  '));
 
 //  -------------------------------------------------------------
     if (addProperty == true) {
-      content.add(TextContent('tobeenforcedYes', ' \u2713 '));
-      content.add(TextContent('foreclosureYes', ' \u2713 '));
+      content.add(TextContent('tobeenforcedYes', ' \u2713  '));
+      content.add(TextContent('foreclosureYes', ' \u2713  '));
 // property list
       List <Content> list  = [];
       propertyList.split('\n').forEach((element) {list.add(
@@ -427,13 +427,13 @@ Future<void> changeTextContent({
       content.add(ListContent('multilineList',list));
     } else {
       //content.add(TextContent('tobeenforcedNo', '\u2713'));
-      content.add(TextContent('foreclosureNo', ' \u2713 '));
+      content.add(TextContent('foreclosureNo', ' \u2713  '));
     }
 //
     if (transition == true) {
-      content.add(TextContent('tobeenforcedYes', ' \u2713 '));
+      content.add(TextContent('tobeenforcedYes', ' \u2713  '));
     } else {
-      content.add(TextContent('tobeenforcedNo', ' \u2713 '));
+      content.add(TextContent('tobeenforcedNo', ' \u2713  '));
     }
 
 // set loan full amount
