@@ -97,7 +97,7 @@ class _AmountsState extends State<Amounts> {
             ),
             keyboardType: TextInputType.number,
                inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')), // Allow only digits
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')), // Allow only digits
               ],
             textInputAction: TextInputAction.done,
             validator: (value) {
