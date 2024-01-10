@@ -404,21 +404,26 @@ Future<void> changeTextContent(
 
     if (debtorsData.length > 1) {
       content.add(TextContent('solidarydemantNo', ' \u2713  '));
+      content.add(TextContent('solidarydemantYes', ' □ '));//rm
       content.add(TextContent('severalLiabilityYes', ' \u2713  '));
+      content.add(TextContent('severalLiabilityNo', ' □ '));//rm  //\u25A0
     } else {
       content.add(TextContent('solidarydemantNo', ' \u2713  '));
+      content.add(TextContent('solidarydemantYes', ' □ '));//rm
       content.add(TextContent('severalLiabilityNo', ' \u2713  '));
+      content.add(TextContent('severalLiabilityYes', ' □ '));//rm
     }
 
 //  -------------------------------------------------------------
 
     content.add(TextContent('reciprocalbligationNo', ' \u2713  '));
-
+    content.add(TextContent('reciprocalbligationYes', ' □  '));
 //  -------------------------------------------------------------
     if (addProperty == true) {
       content.add(TextContent('tobeenforcedYes', ' \u2713  '));
-
+      content.add(TextContent('tobeenforcedNo', ' □  ')); //rm
       content.add(TextContent('foreclosureYes', ' \u2713  '));
+      content.add(TextContent('foreclosureNo', ' □  ')); //rm
 
 // property list
       List<Content> list = [];
@@ -433,12 +438,15 @@ Future<void> changeTextContent(
     } else {
       //content.add(TextContent('tobeenforcedNo', '\u2713'));
       content.add(TextContent('foreclosureNo', ' \u2713  '));
+      content.add(TextContent('foreclosureYes', ' □  '));//rm
     }
 //
     if (transition == true) {
       content.add(TextContent('tobeenforcedYes', ' \u2713  '));
+      content.add(TextContent('tobeenforcedNo', ' □   ')); //rm
     } else {
       content.add(TextContent('tobeenforcedNo', ' \u2713  '));
+      content.add(TextContent('tobeenforcedYes', ' □   ')); //rm
     }
 
 // set loan full amount
