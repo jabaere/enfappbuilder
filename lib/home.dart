@@ -405,11 +405,9 @@ Future<void> changeTextContent(
     if (debtorsData.length > 1) {
       content.add(TextContent('solidarydemantNo', ' \u2713  '));
       content.add(TextContent('severalLiabilityYes', ' \u2713  '));
-      content.add(TextContent('severalLiabilityNo', '  ')); //remove
     } else {
       content.add(TextContent('solidarydemantNo', ' \u2713  '));
       content.add(TextContent('severalLiabilityNo', ' \u2713  '));
-      content.add(TextContent('severalLiabilityYes', '  '));//remove
     }
 
 //  -------------------------------------------------------------
@@ -419,9 +417,9 @@ Future<void> changeTextContent(
 //  -------------------------------------------------------------
     if (addProperty == true) {
       content.add(TextContent('tobeenforcedYes', ' \u2713  '));
-      content.add(TextContent('tobeenforcedNo', '  ')); //remove
+
       content.add(TextContent('foreclosureYes', ' \u2713  '));
-      content.add(TextContent('foreclosureNo', '  ')); //remove
+
 // property list
       List<Content> list = [];
       propertyList.split('\n').forEach((element) {
@@ -435,28 +433,25 @@ Future<void> changeTextContent(
     } else {
       //content.add(TextContent('tobeenforcedNo', '\u2713'));
       content.add(TextContent('foreclosureNo', ' \u2713  '));
-      content.add(TextContent('foreclosureYes', '  ')); //remove
     }
 //
     if (transition == true) {
       content.add(TextContent('tobeenforcedYes', ' \u2713  '));
-      content.add(TextContent('tobeenforcedNo', '  ')); //remove
     } else {
       content.add(TextContent('tobeenforcedNo', ' \u2713  '));
-      content.add(TextContent('tobeenforcedYes', '  ')); //remove
     }
 
 // set loan full amount
 
-    if (
-        loanPrincipal.startsWith('0') && loanPrincipal.length > 1 ||
+    if (loanPrincipal.startsWith('0') && loanPrincipal.length > 1 ||
         loanInterest.startsWith('0') && loanInterest.length > 1 ||
         comissionFee.startsWith('0') && comissionFee.length > 1 ||
         loanPenalty.startsWith('0') && loanPenalty.length > 1 ||
         insuranceAmount.startsWith('0') && insuranceAmount.length > 1 ||
-        applicationFee.startsWith('0') && applicationFee.length > 1 || 
-        addProperty == true && foreclosureFee.startsWith('0') && foreclosureFee.length > 1
-        ) {
+        applicationFee.startsWith('0') && applicationFee.length > 1 ||
+        addProperty == true &&
+            foreclosureFee.startsWith('0') &&
+            foreclosureFee.length > 1) {
       // ignore: use_build_context_synchronously
       QuickAlert.show(
           context: context,
@@ -465,7 +460,7 @@ Future<void> changeTextContent(
       return;
     } else {
       content.add(TextContent('requestSum',
-          '${(double.parse(loanPrincipal) + double.parse(loanInterest) + double.parse(comissionFee) + double.parse(loanPenalty) + double.parse(insuranceAmount) + double.parse(applicationFee)+ double.parse(addProperty == true ? foreclosureFee : '0')).toStringAsFixed(2)} ლარი'));
+          '${(double.parse(loanPrincipal) + double.parse(loanInterest) + double.parse(comissionFee) + double.parse(loanPenalty) + double.parse(insuranceAmount) + double.parse(applicationFee) + double.parse(addProperty == true ? foreclosureFee : '0')).toStringAsFixed(2)} ლარი'));
     }
 
 // set loan principal
