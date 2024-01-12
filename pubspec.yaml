@@ -40,6 +40,8 @@ dependencies:
   quickalert: ^1.0.2
   localstorage: ^4.0.1+4
   syncfusion_flutter_pdf: ^24.1.44
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.16.0
 
 dev_dependencies:
   flutter_test:
