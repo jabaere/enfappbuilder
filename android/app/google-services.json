@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "433228202011",
+    "project_id": "enfappbuilder",
+    "storage_bucket": "enfappbuilder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433228202011:android:706c806635beaea3d038be",
+        "android_client_info": {
+          "package_name": "com.example.applicationbuilder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDseP0bQh0eye8o6Q8UvDJYLf35-JKcDaE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
