@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show a loading indicator while checking authentication status
-            return const CircularProgressIndicator(color: Colors.teal);
+            return const Center(child: SizedBox(width:50,height:50, child: CircularProgressIndicator(color: Colors.teal)));
           } else {
             // Decide which screen to show based on the authentication status
             return snapshot.data == true
