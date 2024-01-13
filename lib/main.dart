@@ -104,10 +104,13 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+
 class _MyHomePageState extends State<MyHomePage> {
   final int _selectedIndex = 0;
   bool isLoading = true;
-  late final Future<void> Function() fetchData;
+   Future<void> fetchData() {
+    return Future.delayed(const Duration(seconds: 2));
+  }
 
   Widget getPage() {
     switch (_selectedIndex) {
