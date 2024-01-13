@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,54 +9,131 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key, required this.onLoginSuccess}) : super(key: key);
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final fontColor = Colors.orange[600];
+  final heplerTextColor = Color.fromARGB(221, 225, 227, 228);
 
+  bool isLargeScreen = true;
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/background.jpg'),
+              fit: BoxFit.cover,
+            ),
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 250,
-                child: TextField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                    border: const OutlineInputBorder(),
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 240, 235, 235),
+              Container(
+                width: 400,
+                height: 350,
+                margin: const EdgeInsets.only(top: 150.0),
+                color: Color.fromARGB(41, 83, 83, 83),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                  child: Container(
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: const EdgeInsets.all(28.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 250,
+                            height: 40,
+                            child: TextField(
+                              controller: _usernameController,
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                labelStyle: TextStyle(color: fontColor,letterSpacing: 1.2),
+                                border: const OutlineInputBorder(),
+                                filled: true,
+                                fillColor:
+                                    const Color.fromARGB(82, 243, 123, 123),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors
+                                          .orange), // Set the focused border color
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: 250,
+                            height: 40,
+                            child: TextField(
+                              controller: _passwordController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                labelStyle: TextStyle(color: fontColor,letterSpacing: 1.2),
+                                border: const OutlineInputBorder(),
+                                filled: true,
+                                fillColor:
+                                    const Color.fromARGB(82, 243, 123, 123),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors
+                                          .orange), // Set the focused border color
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: 250,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      const Color.fromARGB(82, 243, 123, 123)),
+                                  foregroundColor:
+                                      MaterialStateProperty.all(Colors.white)),
+                              onPressed: () {
+                                loginUser(context);
+                              },
+                              child: Text('Login',
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: fontColor,
+                                    letterSpacing: 1
+                                  )),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            'Contact info: - app-build@europe.com',
+                            style: TextStyle(
+                                color: heplerTextColor,
+                                letterSpacing: 0.5,
+                                fontSize: 15),
+                          ),
+                          const SizedBox(height: 10),
+                          Center(
+                            child: Text(
+                              'Generate applications within 10 seconds',
+                              style: TextStyle(
+                                  color: heplerTextColor,
+                                  letterSpacing: 0.8,
+                                  fontSize: screenSize.width > 600 ? 17 : 15),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              SizedBox(
-                width: 250,
-                child: TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: const OutlineInputBorder(),
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 240, 235, 235),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  loginUser(context);
-                },
-                child: Text('Login'),
               ),
             ],
           ),
@@ -91,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
