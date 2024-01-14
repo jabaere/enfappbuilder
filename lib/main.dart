@@ -21,6 +21,13 @@ void main() async {
   }
   //firebase_analytics
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  await analytics.logEvent(
+  name: 'app_open',
+  parameters: <String, dynamic>{
+    'screen': 'login_screen',
+  },
+);
+
   runApp(const MyApp());
 }
 
