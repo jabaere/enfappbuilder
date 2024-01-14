@@ -19,20 +19,13 @@ void main() async {
   } catch (e) {
     print('Firebase initialization error: $e');
   }
-  //add Firebase-Analytics
-  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  await analytics.logEvent(
-    name: 'app_open',
-    parameters: <String, dynamic>{
-      'screen': 'login_screen',
-    },
-  );
 
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   // Simulating fetching data asynchronously
   Future<void> fetchData() {
     return Future.delayed(const Duration(seconds: 2));
