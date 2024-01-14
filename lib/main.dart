@@ -2,6 +2,7 @@ import 'package:applicationbuilder/firebase_options.dart';
 import 'package:applicationbuilder/screens/about.dart';
 import 'package:applicationbuilder/screens/instructions.dart';
 import 'package:applicationbuilder/screens/login_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:applicationbuilder/home.dart';
@@ -18,6 +19,14 @@ void main() async {
   } catch (e) {
     print('Firebase initialization error: $e');
   }
+  //add Firebase-Analytics
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  await analytics.logEvent(
+    name: 'app_open',
+    parameters: <String, dynamic>{
+      'screen': 'login_screen',
+    },
+  );
 
   runApp(const MyApp());
 }
@@ -70,7 +79,11 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show a loading indicator while checking authentication status
-            return const Center(child: SizedBox(width:50,height:50, child: CircularProgressIndicator(color: Colors.teal)));
+            return const Center(
+                child: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: CircularProgressIndicator(color: Colors.teal)));
           } else {
             // Decide which screen to show based on the authentication status
             return snapshot.data == true
@@ -104,11 +117,10 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-
 class _MyHomePageState extends State<MyHomePage> {
   final int _selectedIndex = 0;
   bool isLoading = true;
-   Future<void> fetchData() {
+  Future<void> fetchData() {
     return Future.delayed(const Duration(seconds: 2));
   }
 
