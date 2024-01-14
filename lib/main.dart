@@ -2,6 +2,7 @@ import 'package:applicationbuilder/firebase_options.dart';
 import 'package:applicationbuilder/screens/about.dart';
 import 'package:applicationbuilder/screens/instructions.dart';
 import 'package:applicationbuilder/screens/login_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:applicationbuilder/home.dart';
@@ -18,6 +19,15 @@ void main() async {
   } catch (e) {
     print('Firebase initialization error: $e');
   }
+
+   //add Firebase-Analytics
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  await analytics.logEvent(
+    name: 'app_open',
+    parameters: <String, dynamic>{
+      'screen': 'login_screen',
+    },
+  );
 
   runApp(const MyApp());
 }
