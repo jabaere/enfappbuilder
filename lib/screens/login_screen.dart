@@ -17,7 +17,7 @@ class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final fontColor = Colors.orange[600];
   final heplerTextColor = const Color.fromARGB(221, 225, 227, 228);
-
+  bool isLoading = false;
   bool isLargeScreen = true;
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,8 @@ class LoginScreenState extends State<LoginScreen> {
                               controller: _usernameController,
                               decoration: InputDecoration(
                                 labelText: 'Email',
-                                labelStyle: TextStyle(color: fontColor,letterSpacing: 1.2),
+                                labelStyle: TextStyle(
+                                    color: fontColor, letterSpacing: 1.2),
                                 border: const OutlineInputBorder(),
                                 filled: true,
                                 fillColor:
@@ -78,7 +79,8 @@ class LoginScreenState extends State<LoginScreen> {
                               obscureText: true,
                               decoration: InputDecoration(
                                 labelText: 'Password',
-                                labelStyle: TextStyle(color: fontColor,letterSpacing: 1.2),
+                                labelStyle: TextStyle(
+                                    color: fontColor, letterSpacing: 1.2),
                                 border: const OutlineInputBorder(),
                                 filled: true,
                                 fillColor:
@@ -100,15 +102,30 @@ class LoginScreenState extends State<LoginScreen> {
                                       const Color.fromARGB(82, 243, 123, 123)),
                                   foregroundColor:
                                       MaterialStateProperty.all(Colors.white)),
-                              onPressed: () {
-                                loginUser(context);
+                              onPressed: () async {
+                                setState(() {
+                                  isLoading = true; // Set loading state to true
+                                });
+                                await loginUser(context);
+                                setState(() {
+                                  isLoading = false; // Reset loading state
+                                });
                               },
-                              child: Text('Login',
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    color: fontColor,
-                                    letterSpacing: 1
-                                  )),
+                              child: isLoading
+                                  ? const SizedBox(
+                                      width: 22, // Adjust width as needed
+                                      height: 22, // Adjust height as needed
+                                      child: CircularProgressIndicator(
+                                        color: Colors.orange,
+                                        strokeWidth: 2.0,
+                                      ),
+                                    )
+                                  : Text('Login',
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        color: fontColor,
+                                        letterSpacing: 1,
+                                      )),
                             ),
                           ),
                           const SizedBox(height: 20),

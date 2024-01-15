@@ -35,7 +35,7 @@ class DebtInputsState extends State<DebtInputs> {
               onPressed: () {
                 // Add a new field on button press
                 setState(() {
-                  _fields.add(_buildField('მოვალე - ${_fields.length+1}'));
+                  _fields.add(_buildField('მოვალე - ${_fields.length+1}, პირადი ნომერი, მისამართი, ტელეფონის ნომერი'));
                 });
               },
               child: const SizedBox(
@@ -62,7 +62,7 @@ class DebtInputsState extends State<DebtInputs> {
     return Column(
       children: [
         SizedBox(
-          width: 250,
+          width: 350,
           child: TextFormField(
             controller: controller,
             decoration: InputDecoration(
