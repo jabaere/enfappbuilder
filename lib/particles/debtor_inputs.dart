@@ -28,26 +28,54 @@ class DebtInputsState extends State<DebtInputs> {
                 Column(
                   children: _fields,
                 ),
+
               ],
             ),
             smallGap, // Add spacing
-            ElevatedButton(
-              onPressed: () {
-                // Add a new field on button press
-                setState(() {
-                  _fields.add(_buildField('მოვალე - ${_fields.length+1}, პირადი ნომერი, მისამართი, ტელეფონის ნომერი'));
-                });
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+             
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Add a new field on button press
+                    setState(() {
+                      _fields.add(_buildField('მოვალე - ${_fields.length+1}, პირადი ნომერი, მისამართი, ტელეფონის ნომერი'));
+                    });
+                  },
+                  child: const SizedBox(
+                    width: 102,
+                    child: Row(
+                      children: [
+                        Text('დამატება'),
+                        SizedBox(width: 5),
+                        Icon(Icons.add,color:Colors.green),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                if (_fields.length > 1)
+                  ElevatedButton(
+                    onPressed: () {
+                      // Add a new field on button press
+                      setState(() {
+                        _fields.removeLast();
+                        _controllers.removeLast();
+                      });
+                    },
               child: const SizedBox(
                 width: 102,
                 child: Row(
                   children: [
-                    Text('დამატება'),
+                    Text('წაშლა'),
                     SizedBox(width: 5),
-                    Icon(Icons.add),
+                    Icon(Icons.remove_circle_outline,color: Colors.red,),
                   ],
                 ),
               ),
+            ),
+              ],
             ),
           ],
         ),
