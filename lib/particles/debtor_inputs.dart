@@ -65,7 +65,7 @@ class DebtInputsState extends State<DebtInputs> {
                       });
                     },
               child: const SizedBox(
-                width: 102,
+                width: 82,
                 child: Row(
                   children: [
                     Text('წაშლა'),

@@ -23,12 +23,20 @@ class UploadScreenState extends State<UploadScreen> {
     // Read the PDF document only after setting _filePath inside setState
     final reader = FileReader();
     reader.readAsArrayBuffer(file);
-
+   
     reader.onLoadEnd.listen((event) {
       // Load an existing PDF document.
-      PdfDocument document = PdfDocument(
-        inputBytes: reader.result as List<int>,
-      );
+      PdfDocument? document;
+      try {
+   document = PdfDocument(
+    inputBytes: reader.result as List<int>,
+  );
+} catch (e) {
+    setState(() {
+        output= 'აირჩიეთ PDF ფაილი!';
+      });
+    return;
+}
 
       String text = PdfTextExtractor(document).extractText();
       //print(text);
@@ -47,7 +55,9 @@ class UploadScreenState extends State<UploadScreen> {
         }
         return result.toString().trim(); // Remove trailing space
       }
-
+       
+      if(appNum.isNotEmpty && identificationCode.isNotEmpty && amounts.isNotEmpty && names.isNotEmpty){
+        
       if (identificationCode.length > 1) {
         setState(() {
           output = '''
@@ -86,10 +96,18 @@ ${amounts[1]} ლარი - სააპლიკაციო საფას�
 ''';
         });
       }
+      }else{
+        setState(() {
+          output = 'აირჩიეთ გამარტივებული წარმოების რეკვიზიტი!';
+        });
+        return;
+      }
 
 
       document.dispose();
     });
+     
+
   }
 
   void _pickFile() {
@@ -205,12 +223,16 @@ ${amounts[1]} ლარი - სააპლიკაციო საფას�
                 if (output.isNotEmpty)
                   Column(
                     children: [
-                      Text(output,
-                          style: TextStyle(
+                     if(output != 'აირჩიეთ გამარტივებული წარმოების რეკვიზიტი!' && output != 'აირჩიეთ PDF ფაილი!') Text(output,
+                          style:  const TextStyle(
                             fontSize: 12,
-                            color: Colors.green[400],
+                            color: Colors.black87,
+                          )) else Text(output,
+                          style:  const TextStyle(
+                            fontSize: 18,
+                            color: Colors.red,
                           )),
-                      ElevatedButton.icon(
+                      if(output != 'აირჩიეთ გამარტივებული წარმოების რეკვიზიტი!' && output != 'აირჩიეთ PDF ფაილი!') ElevatedButton.icon(
                         onPressed: copyOutput,
                         icon: const Icon(Icons.copy_all),
                         label: const Text('Copy'),

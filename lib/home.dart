@@ -322,6 +322,11 @@ Future<void> changeTextContent(
 //  debtor name
     var debtorName = 'generated';
 
+//
+
+String square = ' ▢ ';
+String checkmark = ' \u2713 ';
+
 // Load the template DOCX file
     const f = 'assets/template.docx';
     final template = await DocxTemplate.fromBytes(
@@ -403,27 +408,27 @@ Future<void> changeTextContent(
 // set conditions -------------------------------------------------------------
 
     if (debtorsData.length > 1) {
-      content.add(TextContent('solidarydemantNo', ' \u2713  '));
-      content.add(TextContent('solidarydemantYes', ' □ '));//rm
-      content.add(TextContent('severalLiabilityYes', ' \u2713  '));
-      content.add(TextContent('severalLiabilityNo', ' □ '));//rm  //\u25A0
+      content.add(TextContent('solidarydemantNo', checkmark));
+      content.add(TextContent('solidarydemantYes', square));//rm
+      content.add(TextContent('severalLiabilityYes', checkmark));
+      content.add(TextContent('severalLiabilityNo', square));//rm  //\u25A0
     } else {
-      content.add(TextContent('solidarydemantNo', ' \u2713  '));
-      content.add(TextContent('solidarydemantYes', ' □ '));//rm
-      content.add(TextContent('severalLiabilityNo', ' \u2713  '));
-      content.add(TextContent('severalLiabilityYes', ' □ '));//rm
+      content.add(TextContent('solidarydemantNo', checkmark));
+      content.add(TextContent('solidarydemantYes', square));//rm
+      content.add(TextContent('severalLiabilityNo', checkmark));
+      content.add(TextContent('severalLiabilityYes', square));//rm
     }
 
 //  -------------------------------------------------------------
 
-    content.add(TextContent('reciprocalbligationNo', ' \u2713  '));
-    content.add(TextContent('reciprocalbligationYes', ' □  '));
+    content.add(TextContent('reciprocalbligationNo', checkmark));
+    content.add(TextContent('reciprocalbligationYes', square));
 //  -------------------------------------------------------------
     if (addProperty == true) {
-      content.add(TextContent('tobeenforcedYes', ' \u2713  '));
-      content.add(TextContent('tobeenforcedNo', ' □  ')); //rm
-      content.add(TextContent('foreclosureYes', ' \u2713  '));
-      content.add(TextContent('foreclosureNo', ' □  ')); //rm
+      content.add(TextContent('tobeenforcedYes', checkmark));
+      content.add(TextContent('tobeenforcedNo', square)); //rm
+      content.add(TextContent('foreclosureYes', checkmark));
+      content.add(TextContent('foreclosureNo', square)); //rm
 
 // property list
       List<Content> list = [];
@@ -437,16 +442,16 @@ Future<void> changeTextContent(
       content.add(ListContent('multilineList', list));
     } else {
       //content.add(TextContent('tobeenforcedNo', '\u2713'));
-      content.add(TextContent('foreclosureNo', ' \u2713  '));
-      content.add(TextContent('foreclosureYes', ' □  '));//rm
+      content.add(TextContent('foreclosureNo', checkmark));
+      content.add(TextContent('foreclosureYes', square));//rm
     }
 //
     if (transition == true) {
-      content.add(TextContent('tobeenforcedYes', ' \u2713  '));
-      content.add(TextContent('tobeenforcedNo', ' □   ')); //rm
+      content.add(TextContent('tobeenforcedYes', checkmark));
+      content.add(TextContent('tobeenforcedNo', square)); //rm
     } else {
-      content.add(TextContent('tobeenforcedNo', ' \u2713  '));
-      content.add(TextContent('tobeenforcedYes', ' □   ')); //rm
+      content.add(TextContent('tobeenforcedNo', checkmark));
+      content.add(TextContent('tobeenforcedYes', square)); //rm
     }
 
 // set loan full amount
