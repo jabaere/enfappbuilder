@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:applicationbuilder/firebase_options.dart';
 import 'package:applicationbuilder/screens/about.dart';
 import 'package:applicationbuilder/screens/instructions.dart';
@@ -21,12 +22,23 @@ void main() async {
   }
   //firebase_analytics
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   await analytics.logEvent(
-  name: 'app_open',
-  parameters: <String, dynamic>{
-    'screen': 'login_screen',
-  },
-);
+    name: 'app_open',
+    parameters: <String, dynamic>{
+      'screen': 'login_screen',
+    },
+  );
+
+// reset user state after 3 hours
+  // final LocalStorage storage = LocalStorage('my_app');
+  // Timer.periodic(const Duration(minutes: 180), (timer) async {
+  //   await storage.setItem('isLoggedIn', false);
+  //   await storage.setItem('token', '');
+  //
+  //   await FirebaseAuth.instance.signOut();
+
+  // });
 
   runApp(const MyApp());
 }
@@ -41,23 +53,21 @@ class MyApp extends StatelessWidget {
 
   Future<bool> checkUserAuthenticationState() async {
     final LocalStorage storage = LocalStorage('my_app');
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
     await storage.ready;
 
-    return storage.getItem('isLoggedIn') ?? false;
+    if (user == null){
+       await storage.setItem('isLoggedIn', false);
+       await storage.setItem('token', '');
+    }
+
+    if (user == null) return false;
+
+    return storage.getItem('isLoggedIn') &&
+            user.refreshToken == storage.getItem('token') ||
+        false;
   }
-//
-  // bool isTokenExpired(String token) {
-  //   DateTime tokenCreationDate = DateTime.parse('2024-01-01T00:00:00');
-
-  //   // Calculate the expiration date (3 days from the creation date)
-  //   DateTime expirationDate = tokenCreationDate.add(Duration(days: 3));
-
-  //   // Get the current date and time
-  //   DateTime currentDate = DateTime.now();
-
-  //   // Check if the current date is after the expiration date
-  //   return currentDate.isAfter(expirationDate);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -224,8 +234,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
               // Save authentication state
               await storage.setItem('isLoggedIn', false);
-
-              // Perform additional logout logic if needed
+              await storage.setItem('token', '');
+              //
               await FirebaseAuth.instance.signOut();
               print('Logged out');
               Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -235,7 +245,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => MyHomePage(
                         title: 'აპლიკაციის გენერირება',
-                        fetchData: fetchData, // Add your actual fetchData logic
+                        fetchData: fetchData,
                       ),
                     ));
                   },

@@ -163,6 +163,7 @@ class LoginScreenState extends State<LoginScreen> {
   Future<void> loginUser(BuildContext context) async {
     String username = _usernameController.text;
     String password = _passwordController.text;
+    final LocalStorage storage = LocalStorage('my_app');
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -170,11 +171,34 @@ class LoginScreenState extends State<LoginScreen> {
         password: password,
       );
       // Save authentication state
-      await saveUserAuthenticationState();
+      await saveUserAuthenticationState(token: userCredential.user!.refreshToken);
       widget.onLoginSuccess();
 
       print('User logged in: ${userCredential.user!.email}');
     } on FirebaseAuthException catch (e) {
+      // ignore: use_build_context_synchronously
+      if (e.code == 'user-disabled') {
+      // User account is disabled
+      await FirebaseAuth.instance.signOut();
+      await storage.setItem('isLoggedIn', false);
+   
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Account Disabled'),
+          content: const Text('Your account has been disabled. Please contact support.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }else{
       // ignore: use_build_context_synchronously
       showDialog(
         context: context,
@@ -191,14 +215,16 @@ class LoginScreenState extends State<LoginScreen> {
           ],
         ),
       );
+    }
       print('Error: ${e.message}');
     }
   }
 
-  Future<void> saveUserAuthenticationState() async {
+  Future<void> saveUserAuthenticationState({String? token}) async {
     final LocalStorage storage = LocalStorage('my_app');
-
+  
     // Save authentication state
     await storage.setItem('isLoggedIn', true);
+    await storage.setItem('token', token);
   }
 }
