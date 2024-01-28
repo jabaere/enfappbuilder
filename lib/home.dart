@@ -324,7 +324,7 @@ Future<void> changeTextContent(
 
 //
 
-String square = ' \u25A2 ';
+String square = ' □ ';  //\u25A2 
 String checkmark = ' \u2713 ';
 
 // Load the template DOCX file
