@@ -219,13 +219,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   .push(_createRoute(const InstructionsScreen()));
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.segment_sharp),
-            color: Colors.grey[200],
-            onPressed: () {
-              Navigator.of(context).push(_createRoute(const About()));
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.segment_sharp),
+          //   color: Colors.grey[200],
+          //   onPressed: () {
+          //     Navigator.of(context).push(_createRoute(const About()));
+          //   },
+          // ),
           IconButton(
             icon: const Icon(Icons.logout),
             color: Colors.grey[200],
