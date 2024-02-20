@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:applicationbuilder/firebase_options.dart';
-import 'package:applicationbuilder/screens/about.dart';
 import 'package:applicationbuilder/screens/instructions.dart';
 import 'package:applicationbuilder/screens/login_screen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -30,12 +29,12 @@ void main() async {
     },
   );
 
-// reset user state after 3 hours
+//reset user state after 5 days
   // final LocalStorage storage = LocalStorage('my_app');
-  // Timer.periodic(const Duration(minutes: 180), (timer) async {
+  // Timer.periodic(const Duration(minutes: 7200), (timer) async {
   //   await storage.setItem('isLoggedIn', false);
   //   await storage.setItem('token', '');
-  //
+  
   //   await FirebaseAuth.instance.signOut();
 
   // });
