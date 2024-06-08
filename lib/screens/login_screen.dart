@@ -130,7 +130,7 @@ class LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            'Contact info: - app-build@europe.com',
+                            'Contact info: - info@app-build.click',
                             style: TextStyle(
                                 color: heplerTextColor,
                                 letterSpacing: 0.5,
