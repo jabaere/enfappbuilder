@@ -561,6 +561,7 @@ String checkmark = ' \u2713 ';
     html.Url.revokeObjectUrl(url);
     // ignore: use_build_context_synchronously
     QuickAlert.show(
+      // ignore: use_build_context_synchronously
       context: context,
       type: QuickAlertType.success,
     );
@@ -568,6 +569,7 @@ String checkmark = ' \u2713 ';
     print('Error modifying DOCX file: $e');
     // ignore: use_build_context_synchronously
     QuickAlert.show(
+      // ignore: use_build_context_synchronously
       context: context,
       type: QuickAlertType.error,
     );

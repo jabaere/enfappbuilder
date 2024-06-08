@@ -76,10 +76,14 @@ class MyApp extends StatelessWidget {
       //  debugShowMaterialGrid: true,
       title: 'Applicationbuilder',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: colorScheme.onSurfaceVariant,
-          background: colorScheme.background,
-        ),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+        seedColor: colorScheme.onSurfaceVariant,
+        surface: colorScheme.onSurface,
+      // ···
+        brightness: Brightness.light,
+    ),
+    
         appBarTheme: AppBarTheme(
           backgroundColor: colorScheme.onSurfaceVariant,
         ),
@@ -194,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(
           widget.title,
-          style: TextStyle(color: colorScheme.surfaceVariant),
+          style: TextStyle(color: colorScheme.surfaceContainerHighest),
         ),
         actions: <Widget>[
           // IconButton(
@@ -236,6 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
               await storage.setItem('token', '');
               //
               await FirebaseAuth.instance.signOut();
+              
               print('Logged out');
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => LoginScreen(

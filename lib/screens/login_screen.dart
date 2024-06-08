@@ -98,10 +98,10 @@ class LoginScreenState extends State<LoginScreen> {
                             width: 250,
                             child: ElevatedButton(
                               style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
+                                  backgroundColor: WidgetStateProperty.all(
                                       const Color.fromARGB(82, 243, 123, 123)),
                                   foregroundColor:
-                                      MaterialStateProperty.all(Colors.white)),
+                                      WidgetStateProperty.all(Colors.white)),
                               onPressed: () async {
                                 setState(() {
                                   isLoading = true; // Set loading state to true
