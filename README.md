@@ -15,6 +15,7 @@ Web App to generate Microsoft Word documents (.docx) and parse PDF files to extr
 5. Cloud Integration: Firebase is used for backend services, offering real-time database capabilities, authentication, and cloud storage, ensuring that the app is scalable and secure.
 
 6. Installable (PWA): The app is a Progressive Web App (PWA), which means it can be installed directly on various devices (desktop, mobile, or tablet) from a web browser. Once installed, it behaves like a native app, allowing users to access its features conveniently without needing to navigate to a browser each time. This enhances usability, provides an app-like experience, and ensures the app is readily available whenever needed, even with offline capabilities in some cases.
+   
 ![app-build-05](https://github.com/user-attachments/assets/5cf20067-9d98-4e31-bcd2-1995d30ba1c2)
 
 ![app-build-01](https://github.com/user-attachments/assets/0b9e5782-3980-44a7-86b2-b41ca46d572b)
