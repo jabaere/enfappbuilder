@@ -1,103 +1,124 @@
 import 'package:flutter/material.dart';
 
 class InstructionsScreen extends StatelessWidget {
-  final headerStyle = const TextStyle(color: Colors.teal, fontSize: 18);
-
   const InstructionsScreen({super.key});
- 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.grey[200]),
+        title: const Text('ინსტრუქცია'),
+        elevation: 0,
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: Wrap(
-              spacing: 10.0,
-              runSpacing: 10.0,
-              alignment: WrapAlignment.start,
-              direction: constraints.maxWidth < 600 ? Axis.vertical : Axis.horizontal,
-              children: [
-                buildContent('მოხმარების წესები',[
-                  '''
-                     1.სასურველია დაგენერირებული დოკუმენტი გახსნათ Microsoft Word - ის საშუალებით.
-                     2.აპლიკაციის პირველი გამოყენებისას სასურველია შეინახოთ აპლიკანტის შესახებ ინფორმაცია მონიშვნის
-                       "ინფორმაციის დამახსოვრება" გააქტიურებით.
-                     3.მოვალის გრაფის შეუვსებლობის შემთხვევაში აპლიკაცია გიჩვენებთ შეცდომას და ფაილი არ დაგენერირდება
-                     4.მოვალის გრაფაში ვუთითებთ: <<სახელს << გვარს << პირად ნომერს << მისამართს << ტელეფონის ნომერს
-                       მითითებული მიმდევრობით.
-                     5.რამდენიმე მოვალის შემთხვევაში ავტომატურად მოინიშნება "სოლიდარული" მოთხოვნის გრაფა.
-                     6."ყადაღის" მონიშვნის შემთხვევაში ავტომატურად მონიშნება "აღსასრულებლად მიქცევის" გრაფაც.
-                     7."აღსასრულებლად მიქცევის" მონიშვნის გააქტიურება შესაძლებელია დამოუკიდებლადაც.
-                     8."ყადაღის" მონიშვნის შემთხვევაში გააქტიურდება ქონების გრაფა, რომლის შევსებისას უნდა
-                       გაითვალისწონოთ, რომ ყოველი ახალი წინადადება უნდა დაიწყოს ახალი ხაზიდან.
-                     9.თანხების მითითების დროს თუ არ არსებობს რომელიმე მოთხოვნა შესაბამის გრაფაში ვწერთ 0 - ს,
-                     მაგალითად არ გვაქვს "საკომისიო" - მივუთითებთ 0-ს და ა.შ.
-                     10.მოთხოვნის დასაბუთებაში მითითებულია ზოგადი ინფორმაცია:
-                        1.	სესხის ხელშეკრულება
-                        2.	გრაფიკი
-                        3.	გაფრთხილების წერილები
-                        4.	საბანკო რეკვიზიტები და ამონაწერი. 
-                        5.	მინდობილობა.
-                      აუცილებლობის შემთხვევაში დასაბუთება შეგიძლიათ დააკორექტიროთ ხელით.
-                  '''
-                  ]),
-                // buildContent('ტექნიკური ინფორმაცია',[
-                //   '''
-                //   აპლიკაცია არ გზავნის და არ ინახავს თქვენს მიერ შეყვანილ ინფორმაციას. 
-                //   ხშირად გამოყენებული/განმეორებადი საჯარო ინფორმაცია, მაგალითად კრედიტორის შესახებ - 
-                //   ინახება ლოკალურად web browser - ის local storage - ში.
-                //   ''',
-                //   '''
-                //   აპლიკაციის მუშაობის პრინციპი მოიცავს 3 ეტაპს:
-                //      1.შაბლონის ჩამოტვირთვა
-                //         მოთხოვნის შემდეგ სისტემა ჩამოტვირთავს შაბლონს (HTTP მოთხოვნის საშუალებით)
-                //      2.შაბლონის მოდიფიკაცია
-                //         შაბლონის მეხსიერებაში ჩატვირთვის შემდეგ ლოკალურად ხდება placeholder - ების
-                //         ჩანაცვლება მომხმარებლის მიერ შეყვანილი მონაცემებით.
-                //      3.შეცვლილი ფაილის შენახვა
-                //         სისტემა შეინახავს მოდიფიცირებულ ფაილს download საქაღალდეში 
-                    
-                //   გადარიცხვის ტექსტის ავტომატური გენერირებისათვის სისტემა ლოკალურად კითხულობს არჩეული
-                //   ფაილის შინაარს და აგენერირებს შესაბამის ტექსტს. აღნიშნული პროცედურის დროს
-                //   არჩეული ფაილი არ ინახება და იგზავნება მონაცემთა ბაზებში.
-                //   '''
-                // ]),
-                // Add more content as needed
-              ],
-            ),
-          );
-        },
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800), // Max width for reading comfort
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            children: [
+              _buildInstructionCard(
+                title: 'გამოყენების ინსტრუქცია',
+                icon: Icons.info_outline_rounded,
+                content: [
+                  '1. სასურველია აპლიკაციის მიერ დაგენერირებული დოკუმენტი გახსნათ Microsoft Word-ის საშუალებით.',
+                  '2. პირველი გამოყენებისას შეგიძლიათ შეინახოთ კრედიტორის (აპლიკანტის) ინფორმაცია "ინფორმაციის დამახსოვრება" ღილაკით.',
+                  '3. მოვალის გრაფის შეუვსებლობის შემთხვევაში აპლიკაცია გიჩვენებთ შეცდომას და ფაილი არ დაგენერირდება.',
+                  '4. მოვალის გრაფაში შეიყვანეთ ინფომაცია თანმიმდევრობით: სახელი გვარი, პირადი ნომერი, მისამართი, ტელეფონის ნომერი.',
+                  '5. რამდენიმე მოვალის დამატების (ღილაკი "დამატება") შემთხვევაში ავტომატურად მოინიშნება "სოლიდარული" მოთხოვნის სტატუსი.',
+                  '6. "ყადაღის" მონიშვნის შემთხვევაში ავტომატურად ინიშნება "აღსასრულებლად მიქცევის" გრაფაც.',
+                  '7. "აღსასრულებლად მიქცევის" მონიშვნა შესაძლებელია დამოუკიდებლადაც.',
+                  '8. "ყადაღის" მონიშვნისას ჩნდება ქონების დამატებითი გრაფა. ყოველი ახალი ქონების შესახებ ინფორმაცია უნდა დაიწყოს ახალი ხაზიდან.',
+                  '9. თანხების გრაფაში, თუ რომელიმე მოთხოვნა არ არსებობს (მაგ: საკომისიო), ველში მიუთითეთ 0.',
+                  '10. მოთხოვნის დასაბუთებაში ავტომატურად მითითებულია სტანდარტული ჩამონათვალი:\n   • სესხის ხელშეკრულება\n   • გრაფიკი\n   • გაფრთხილების წერილები\n   • საბანკო რეკვიზიტები და ამონაწერი\n   • მინდობილობა\nსაჭიროებისამებრ, ფაილის დაგენერირების შემდეგ შეგიძლიათ ეს სია ხელით შეცვალოთ Word-ში.',
+                ],
+              ),
+              const SizedBox(height: 24),
+              _buildInstructionCard(
+                title: 'ტექნიკური ინფორმაცია და უსაფრთხოება',
+                icon: Icons.security_rounded,
+                content: [
+                  'აპლიკაცია მუშაობს სრულად ლოკალურად უსაფრთხოდ თქვენს ბრაუზერში.',
+                  'არცერთი შეყვანილი პერსონალური თუ ფინანსური მონაცემი არ იგზავნება სერვერზე და არ ინახება მონაცემთა ბაზაში.',
+                  '"ინფორმაციის დამახსოვრების" ფუნქცია იყენებს მხოლოდ თქვენი ბრაუზერის ლოკალურ მეხსიერებას (Local Storage).',
+                  'Word შაბლონის შევსება და დოკუმენტის გენერირება ხდება მყისიერად თქვენს მოწყობილობაზე, რაც გამორიცხავს მონაცემთა გაჟონვის რისკს.'
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget buildContent(String title,List<String> about) {
- 
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: headerStyle),
-          const SizedBox(height: 5),
-         Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: about.map((item) => Text(item)).toList(),
-          ),
-         
-          
-          // Add more text or content here...
-        ],
+  Widget _buildInstructionCard({
+    required String title,
+    required IconData icon,
+    required List<String> content,
+  }) {
+    return Card(
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFFE2E8F0)),
+      ),
+      elevation: 0,
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(28.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4F46E5).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: const Color(0xFF4F46E5), size: 24),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1E293B),
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            ...content.map((text) => Padding(
+                  padding: const EdgeInsets.only(bottom: 14.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 6.0),
+                        child: Icon(Icons.circle, size: 6, color: Color(0xFF94A3B8)),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          text,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF475569),
+                            height: 1.6, // Better line height for readability
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+          ],
+        ),
       ),
     );
   }
 }
-
-
-
-

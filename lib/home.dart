@@ -1,32 +1,25 @@
 import 'package:applicationbuilder/particles/amounts.dart';
 import 'package:applicationbuilder/particles/debtor_inputs.dart';
 import 'package:applicationbuilder/particles/orginputs.dart';
-import 'package:docx_template/docx_template.dart';
+import 'package:applicationbuilder/services/docx_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:quickalert/quickalert.dart';
 
-//
 bool isLoading = false;
 bool warning = false;
-//attach a GlobalKey to a DebtorInputs class,
 final GlobalKey<DebtInputsState> debtInputsKey = GlobalKey<DebtInputsState>();
-//
 final GlobalKey<OrgInputsState> orgInputsKey = GlobalKey<OrgInputsState>();
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   HomeScreenState createState() => HomeScreenState();
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  double btnWidt = 250;
-  double btnHeight = 52;
-
   final _formKey = GlobalKey<FormState>();
   final _orgNameController = TextEditingController();
   final _orgIdController = TextEditingController();
@@ -38,7 +31,7 @@ class HomeScreenState extends State<HomeScreen> {
   final _representativeIdController = TextEditingController();
   final _representativeAdressController = TextEditingController();
   final _representativeNumberAndEmailController = TextEditingController();
-  //
+
   final _sumOfAllAmount = TextEditingController();
   final _principalAmount = TextEditingController();
   final _interestAmount = TextEditingController();
@@ -47,25 +40,12 @@ class HomeScreenState extends State<HomeScreen> {
   final _commissionAmount = TextEditingController();
   final _apliccationFeeAmount = TextEditingController();
   final _foreclosureAmount = TextEditingController();
-
-  //
   final _textareaTextInput = TextEditingController();
 
   bool checkboxValueForTransition = false;
   bool checkboxValueForProperty = false;
-  //
-  String orgIdentifyNumberValue = '';
-
-  final headerStyle = const TextStyle(color: Colors.teal, fontSize: 18);
-
   final storage = LocalStorage('app');
-  // List<String> userIdentifyInputValues = List.generate(11, (index) => '');
 
-  // void updateInputValue(int index, String value) {
-  //   setState(() {
-  //     userIdentifyInputValues[index] = value;
-  //   });
-  // }
   @override
   void dispose() {
     _orgNameController.dispose();
@@ -86,205 +66,232 @@ class HomeScreenState extends State<HomeScreen> {
     _commissionAmount.dispose();
     _apliccationFeeAmount.dispose();
     _foreclosureAmount.dispose();
-
+    _textareaTextInput.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
     return Form(
       key: _formKey,
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 28),
-                child: Text(
-                  'აპლიკანტი',
-                  style: headerStyle,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1000), // Max width for large screens
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            children: [
+              // 1. Applicant Section
+              _SectionCard(
+                title: 'აპლიკანტი',
+                icon: Icons.business_center_rounded,
+                child: Column(
+                  children: [
+                    OrgInputs(
+                      orgNameController: _orgNameController,
+                      orgIdController: _orgIdController,
+                      orgAddressController: _orgAddressController,
+                      orgPhoneNumberController: _orgPhoneNumberController,
+                      orgIBanNumberController: _orgIBanNumberController,
+                      orgAccuntNumberController: _orgAccuntNumberController,
+                      representativeNameController: _representativeNameController,
+                      representativeAdressController: _representativeAdressController,
+                      representativeNumberAndEmailController: _representativeNumberAndEmailController,
+                      representativeIdController: _representativeIdController,
+                    ),
+                    if (warning)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text("არასწორი საიდენტიფიკაციო ნომერი",
+                            style: TextStyle(color: Color(0xFFEF4444), fontSize: 13)),
+                      ),
+                  ],
+               ),
+              ),
+              const SizedBox(height: 24),
+
+              // 2. Debtors Section
+              _SectionCard(
+                title: 'მოვალე',
+                icon: Icons.people_alt_rounded,
+                child: DebtInputs(key: debtInputsKey),
+              ),
+              const SizedBox(height: 24),
+
+              // 3. Document Options (Checkboxes)
+              _SectionCard(
+                title: 'პარამეტრები',
+                icon: Icons.tune_rounded,
+                child: Wrap(
+                  spacing: 32,
+                  runSpacing: 16,
+                  children: [
+                    _ActionCheckbox(
+                      label: 'აღსასრულებლად მიქცევა',
+                      value: checkboxValueForTransition,
+                      onChanged: (v) => setState(() => checkboxValueForTransition = v ?? false),
+                    ),
+                    _ActionCheckbox(
+                      label: 'ყადაღა',
+                      value: checkboxValueForProperty,
+                      onChanged: (v) => setState(() {
+                        checkboxValueForProperty = v ?? false;
+                        checkboxValueForTransition = v ?? false;
+                      }),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            OrgInputs(
-              orgNameController: _orgNameController,
-              orgIdController: _orgIdController,
-              orgAddressController: _orgAddressController,
-              orgPhoneNumberController: _orgPhoneNumberController,
-              orgIBanNumberController: _orgIBanNumberController,
-              orgAccuntNumberController: _orgAccuntNumberController,
-              representativeNameController: _representativeNameController,
-              representativeAdressController: _representativeAdressController,
-              representativeNumberAndEmailController:
-                  _representativeNumberAndEmailController,
-              representativeIdController: _representativeIdController,
-            ),
-            warning
-                ? const Text("არასწორი საიდენტიფიკაციო ნომერი",
-                    style: TextStyle(color: Colors.red))
-                : const Text(''),
-            Center(
-              child: Text('მოვალე', style: headerStyle),
-            ),
-            DebtInputs(key: debtInputsKey),
+              const SizedBox(height: 24),
 
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: checkboxValueForTransition,
-                        onChanged: (newValue) {
-                          // Update the checkbox state using the ValueNotifier
-                          setState(() {
-                            checkboxValueForTransition = newValue ?? false;
-                          });
-                        },
-                      ),
-                      const SizedBox(width: 5),
-                      const Text('აღსასრულებლად მიქცევა'),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Checkbox(
-                        value: checkboxValueForProperty,
-                        onChanged: (newValue) {
-                          // Update the checkbox state using the ValueNotifier
+              // 4. Amounts Section
+              _SectionCard(
+                title: 'თანხები',
+                icon: Icons.account_balance_wallet_rounded,
+                child: Amounts(
+                  sumOfAllAmount: _sumOfAllAmount,
+                  principalAmount: _principalAmount,
+                  interestAmount: _interestAmount,
+                  penaltyAmount: _penaltyAmount,
+                  insuranceAmount: _insuranceAmount,
+                  commissionAmount: _commissionAmount,
+                  apliccationFeeAmount: _apliccationFeeAmount,
+                  foreclosureAmount: _foreclosureAmount,
+                  foreclosureAmountTrue: checkboxValueForProperty,
+                ),
+              ),
+              const SizedBox(height: 24),
 
-                          setState(() {
-                            checkboxValueForProperty = newValue ?? false;
-                            checkboxValueForTransition = newValue ?? false;
-                          });
-                        },
-                      ),
-                      const SizedBox(width: 5),
-                      const Text('ყადაღა'),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 28),
-                child: Text('თანხები', style: headerStyle),
-              ),
-            ),
-            Amounts(
-              sumOfAllAmount: _sumOfAllAmount,
-              principalAmount: _principalAmount,
-              interestAmount: _interestAmount,
-              penaltyAmount: _penaltyAmount,
-              insuranceAmount: _insuranceAmount,
-              commissionAmount: _commissionAmount,
-              apliccationFeeAmount: _apliccationFeeAmount,
-              foreclosureAmount: _foreclosureAmount,
-              foreclosureAmountTrue: checkboxValueForProperty,
-            ),
-            checkboxValueForProperty
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(28.0),
-                      child: Column(
-                        children: [
-                          Text('ქონება', style: headerStyle),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 16.0,
-                                horizontal: 12.0), // Adjust padding as needed
-                            child: TextFormField(
-                              controller: _textareaTextInput,
-                              maxLines: 8, //or null
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 16.0, horizontal: 12.0),
-                                border: OutlineInputBorder(),
-                                filled: true,
-                                fillColor: Color.fromARGB(255, 240, 235, 235),
-                                hintStyle: TextStyle(fontSize: 12),
-                                hintText:
-                                    " სახელი გვარი პ/ნ 000000000  \n საკადასტრო კოდი",
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+              // 5. Property Section (Conditionally shown)
+              if (checkboxValueForProperty)
+                _SectionCard(
+                  title: 'ქონება',
+                  icon: Icons.real_estate_agent_rounded,
+                  child: TextFormField(
+                    controller: _textareaTextInput,
+                    maxLines: 6,
+                    decoration: const InputDecoration(
+                      hintText: "სახელი გვარი პ/ნ 000000000\nსაკადასტრო კოდი",
+                      alignLabelWithHint: true,
                     ),
-                  )
-                : Container(),
-// Other Form Fields...
+                  ),
+                ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 140),
-              child: ElevatedButton(
-                onPressed: () async {
-                  //debtInputsKey.currentState?.readDataFromControllers();
-                  //debtInputsKey.currentState?.readDataFromControllers();
-                  if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      isLoading = true; // Set loading state
-                    });
+              const SizedBox(height: 48),
 
-                    try {
-                      await changeTextContent(
-                          orgName: _orgNameController.text,
-                          orgId: _orgIdController.text,
-                          orgAdress: _orgAddressController.text,
-                          debtorsData: debtInputsKey.currentState!
-                              .readDataFromControllers(),
-                          orgPhone: _orgPhoneNumberController.text,
-                          orgIban: _orgIBanNumberController.text,
-                          orgAccNum: _orgAccuntNumberController.text,
-                          representativeName:
-                              _representativeNameController.text,
-                          representativeAdress:
-                              _representativeAdressController.text,
-                          representativeId: _representativeIdController.text,
-                          representativephoneandmeil:
-                              _representativeNumberAndEmailController.text,
-                          addProperty: checkboxValueForProperty,
-                          transition: checkboxValueForTransition,
-                          propertyList: _textareaTextInput.text,
-                          fullAmount: _sumOfAllAmount.text,
-                          loanPrincipal: _principalAmount.text,
-                          loanInterest: _interestAmount.text,
-                          comissionFee: _commissionAmount.text,
-                          loanPenalty: _penaltyAmount.text,
-                          insuranceAmount: _insuranceAmount.text,
-                          applicationFee: _apliccationFeeAmount.text,
-                          foreclosureFee: _foreclosureAmount.text,
-                          context: context);
-
-                      setState(() {
-                        isLoading = false; // Unset loading state
-                      });
-
-                      // QuickAlert.show(
-                      //   context: context,
-                      //   type: QuickAlertType.success,
-                      // );
-
-                      // _orgNameController.clear(); // Clear input
-                    } catch (e) {
-                      setState(() {
-                        isLoading = false;
-                        // Unset loading state in case of error
-                      });
-                      print('Error: $e');
-                      // Handle error or show error alert
-                    }
-                  }
-                },
-                child: Text(isLoading ? 'Loading...' : 'Generate',
-                    style: headerStyle),
+              // Generate Button
+              SizedBox(
+                height: 56,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: isLoading ? null : _handleGenerate,
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 24, height: 24,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                        )
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.auto_awesome_rounded, size: 20),
+                            SizedBox(width: 8),
+                            Text('დოკუმენტის გენერირება',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+                          ],
+                        ),
+                ),
               ),
+              const SizedBox(height: 48),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleGenerate() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => isLoading = true);
+      try {
+        await changeTextContent(
+          orgName: _orgNameController.text,
+          orgId: _orgIdController.text,
+          orgAdress: _orgAddressController.text,
+          debtorsData: debtInputsKey.currentState!.readDataFromControllers(),
+          orgPhone: _orgPhoneNumberController.text,
+          orgIban: _orgIBanNumberController.text,
+          orgAccNum: _orgAccuntNumberController.text,
+          representativeName: _representativeNameController.text,
+          representativeAdress: _representativeAdressController.text,
+          representativeId: _representativeIdController.text,
+          representativephoneandmeil: _representativeNumberAndEmailController.text,
+          addProperty: checkboxValueForProperty,
+          transition: checkboxValueForTransition,
+          propertyList: _textareaTextInput.text,
+          fullAmount: _sumOfAllAmount.text,
+          loanPrincipal: _principalAmount.text,
+          loanInterest: _interestAmount.text,
+          comissionFee: _commissionAmount.text,
+          loanPenalty: _penaltyAmount.text,
+          insuranceAmount: _insuranceAmount.text,
+          applicationFee: _apliccationFeeAmount.text,
+          foreclosureFee: _foreclosureAmount.text,
+          context: context,
+        );
+      } catch (e) {
+        print('Error: $e');
+      } finally {
+        if (mounted) setState(() => isLoading = false);
+      }
+    }
+  }
+}
+
+// ─── UI Primitives ──────────────────────────────────────────────────────────
+
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Widget child;
+
+  const _SectionCard({required this.title, required this.icon, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4F46E5).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, size: 20, color: const Color(0xFF4F46E5)),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E293B),
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 24),
+            child,
           ],
         ),
       ),
@@ -292,169 +299,99 @@ class HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future<void> changeTextContent(
-    {required String orgName,
-    required String orgId,
-    required String orgAdress,
-    required List debtorsData,
-    required String orgPhone,
-    required String orgIban,
-    required String orgAccNum,
-    required String representativeName,
-    required String representativeAdress,
-    required String representativeId,
-    required String representativephoneandmeil,
-    required bool addProperty,
-    required bool transition,
-    required String propertyList,
-    required String fullAmount,
-    required String loanPrincipal,
-    String loanInterest = '0',
-    String comissionFee = '0',
-    String loanPenalty = '0',
-    String insuranceAmount = '0',
-    required String applicationFee,
-    required String foreclosureFee,
-    required BuildContext context}) async {
+class _ActionCheckbox extends StatelessWidget {
+  final String label;
+  final bool value;
+  final ValueChanged<bool?> onChanged;
+
+  const _ActionCheckbox({required this.label, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => onChanged(!value),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Checkbox(value: value, onChanged: onChanged),
+            const SizedBox(width: 6),
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF334155))),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Document Generation Logic ──────────────────────────────────────────────
+
+Future<void> changeTextContent({
+  required String orgName,
+  required String orgId,
+  required String orgAdress,
+  required List debtorsData,
+  required String orgPhone,
+  required String orgIban,
+  required String orgAccNum,
+  required String representativeName,
+  required String representativeAdress,
+  required String representativeId,
+  required String representativephoneandmeil,
+  required bool addProperty,
+  required bool transition,
+  required String propertyList,
+  required String fullAmount,
+  required String loanPrincipal,
+  String loanInterest = '0',
+  String comissionFee = '0',
+  String loanPenalty = '0',
+  String insuranceAmount = '0',
+  required String applicationFee,
+  required String foreclosureFee,
+  required BuildContext context,
+}) async {
   try {
+    orgName = orgName.trim();
+    orgId = orgId.trim();
+    orgAdress = orgAdress.trim();
+    orgPhone = orgPhone.trim();
+    orgIban = orgIban.trim();
+    orgAccNum = orgAccNum.trim();
+    representativeName = representativeName.trim();
+    representativeAdress = representativeAdress.trim();
+    representativeId = representativeId.trim();
+    representativephoneandmeil = representativephoneandmeil.trim();
+    loanPrincipal = loanPrincipal.trim();
+    loanInterest = loanInterest.trim();
+    comissionFee = comissionFee.trim();
+    loanPenalty = loanPenalty.trim();
+    insuranceAmount = insuranceAmount.trim();
+    applicationFee = applicationFee.trim();
+    foreclosureFee = foreclosureFee.trim();
+    
     var storage = LocalStorage('app');
     await storage.ready;
-//  debtor name
+
     var debtorName = 'generated';
+    final String square = ' \u25A1 '; // □
+    final String checkmark = ' \u2713 '; // ✓
 
-//
-
-String square = ' □ ';  //\u25A2 
-String checkmark = ' \u2713 ';
-
-// Load the template DOCX file
-    const f = 'assets/template.docx';
-    final template = await DocxTemplate.fromBytes(
-        (await rootBundle.load(f)).buffer.asUint8List());
-    Content content = Content();
-
-//content logic -----------------------------------------------------------------
-//set applicant name ------------------------------------------------------------
-
-    content.add(TextContent("applicantName", orgName));
-
-//set applicant id---------------------------------------------------------------
-    void generateTextContentForApplicantId(String id, String contentName) {
-      for (int i = 0; i < id.length; i++) {
-        content.add(TextContent('$contentName$i', id[i]));
-      }
-    }
-
-// avoid using wrong numbers of id -------------------------------------------------------
-
-    if (orgId.length == 11 || orgId.length == 9) {
-      generateTextContentForApplicantId(orgId, 'applicantId');
-    } else {
-// ignore: use_build_context_synchronously
-      QuickAlert.show(
-          context: context,
-          type: QuickAlertType.error,
-          text: 'საიდენტიფიკაციო კოდი უნდა შედგებოდეს 9/11 სიმბოლოსაგან');
+    // Validation
+    if (orgId.length != 11 && orgId.length != 9) {
+      QuickAlert.show(context: context, type: QuickAlertType.error, text: 'საიდენტიფიკაციო კოდი უნდა შედგებოდეს 9/11 სიმბოლოსაგან');
       return;
     }
-
-// set applicant address --------------------------------------------------------
-
-    content.add(TextContent('orgaddress', orgAdress));
-
-// set applicant number phone ---------------------------------------------------
-
-    content.add(TextContent('orgnumber', orgPhone));
-
-// set IBAN code ----------------------------------------------------------------
-
-    content.add(TextContent('orgibancode', orgIban));
-
-// set Account number -----------------------------------------------------------
-
-    if (orgAccNum.length == 22) {
-      generateTextContentForApplicantId(orgAccNum, 'orgaccountnumber');
-    } else {
-      // ignore: use_build_context_synchronously
-      QuickAlert.show(
-          context: context,
-          type: QuickAlertType.error,
-          text: 'ანგარიშის ნომერი უნდა შედგებოდეს 22 სიმბოლოსაგან');
+    if (orgAccNum.length != 22) {
+      QuickAlert.show(context: context, type: QuickAlertType.error, text: 'ანგარიშის ნომერი უნდა შედგებოდეს 22 სიმბოლოსაგან');
       return;
     }
-// set representative name
-
-    if (storage.getItem('representator') == true) {
-      content.add(TextContent('representativename', representativeName));
-      //print(representativeId.length);
-      if (representativeId.length != 11) {
-        // ignore: use_build_context_synchronously
-        QuickAlert.show(
-            context: context,
-            type: QuickAlertType.error,
-            text: 'საიდენტიფიკაციო კოდი უნდა შედგებოდეს 11 სიმბოლოსაგან');
-        return;
-      }
-      generateTextContentForApplicantId(
-          representativeId, 'representativeidnumber');
-
-// set address ----------------------------------------------------------------
-
-      content.add(TextContent('representativeaddress', representativeAdress));
-      content.add(TextContent(
-          'representativephoneandemail', representativephoneandmeil));
+    if (storage.getItem('representator') == true && representativeId.length != 11) {
+      QuickAlert.show(context: context, type: QuickAlertType.error, text: 'საიდენტიფიკაციო კოდი უნდა შედგებოდეს 11 სიმბოლოსაგან');
+      return;
     }
-
-// set conditions -------------------------------------------------------------
-
-    if (debtorsData.length > 1) {
-      content.add(TextContent('solidarydemantNo', checkmark));
-      content.add(TextContent('solidarydemantYes', square));//rm
-      content.add(TextContent('severalLiabilityYes', checkmark));
-      content.add(TextContent('severalLiabilityNo', square));//rm  //\u25A0
-    } else {
-      content.add(TextContent('solidarydemantNo', checkmark));
-      content.add(TextContent('solidarydemantYes', square));//rm
-      content.add(TextContent('severalLiabilityNo', checkmark));
-      content.add(TextContent('severalLiabilityYes', square));//rm
-    }
-
-//  -------------------------------------------------------------
-
-    content.add(TextContent('reciprocalbligationNo', checkmark));
-    content.add(TextContent('reciprocalbligationYes', square));
-//  -------------------------------------------------------------
-    if (addProperty == true) {
-      content.add(TextContent('tobeenforcedYes', checkmark));
-      content.add(TextContent('tobeenforcedNo', square)); //rm
-      content.add(TextContent('foreclosureYes', checkmark));
-      content.add(TextContent('foreclosureNo', square)); //rm
-
-// property list
-      List<Content> list = [];
-      propertyList.split('\n').forEach((element) {
-        list.add(
-          PlainContent("multilinePlain")
-            ..add(TextContent('multilineText', element)),
-        );
-      });
-
-      content.add(ListContent('multilineList', list));
-    } else {
-      //content.add(TextContent('tobeenforcedNo', '\u2713'));
-      content.add(TextContent('foreclosureNo', checkmark));
-      content.add(TextContent('foreclosureYes', square));//rm
-    }
-//
-    if (transition == true) {
-      content.add(TextContent('tobeenforcedYes', checkmark));
-      content.add(TextContent('tobeenforcedNo', square)); //rm
-    } else {
-      content.add(TextContent('tobeenforcedNo', checkmark));
-      content.add(TextContent('tobeenforcedYes', square)); //rm
-    }
-
-// set loan full amount
 
     if (loanPrincipal.startsWith('0') && loanPrincipal.length > 1 ||
         loanInterest.startsWith('0') && loanInterest.length > 1 ||
@@ -462,116 +399,108 @@ String checkmark = ' \u2713 ';
         loanPenalty.startsWith('0') && loanPenalty.length > 1 ||
         insuranceAmount.startsWith('0') && insuranceAmount.length > 1 ||
         applicationFee.startsWith('0') && applicationFee.length > 1 ||
-        addProperty == true &&
-            foreclosureFee.startsWith('0') &&
-            foreclosureFee.length > 1) {
-      // ignore: use_build_context_synchronously
-      QuickAlert.show(
-          context: context,
-          type: QuickAlertType.error,
-          text: 'არასწორი რიცხვი');
+        addProperty == true && foreclosureFee.startsWith('0') && foreclosureFee.length > 1) {
+      QuickAlert.show(context: context, type: QuickAlertType.error, text: 'არასწორი რიცხვი');
       return;
+    }
+
+    // Build values
+    final Map<String, String> textValues = {};
+    textValues['applicantName'] = orgName;
+    for (int i = 0; i < orgId.length; i++) textValues['applicantId$i'] = orgId[i];
+    textValues['orgaddress'] = orgAdress;
+    textValues['orgnumber'] = orgPhone;
+    textValues['orgibancode'] = orgIban;
+    for (int i = 0; i < orgAccNum.length; i++) textValues['orgaccountnumber$i'] = orgAccNum[i];
+
+    if (storage.getItem('representator') == true) {
+      textValues['representativename'] = representativeName;
+      for (int i = 0; i < representativeId.length; i++) textValues['representativeidnumber$i'] = representativeId[i];
+      textValues['representativeaddress'] = representativeAdress;
+      textValues['representativephoneandemail'] = representativephoneandmeil;
+    }
+
+    if (debtorsData.length > 1) {
+      textValues['solidarydemantNo'] = checkmark;
+      textValues['solidarydemantYes'] = square;
+      textValues['severalLiabilityYes'] = checkmark;
+      textValues['severalLiabilityNo'] = square;
     } else {
-      content.add(TextContent('requestSum',
-          '${(double.parse(loanPrincipal) + double.parse(loanInterest) + double.parse(comissionFee) + double.parse(loanPenalty) + double.parse(insuranceAmount) + double.parse(applicationFee) + double.parse(addProperty == true ? foreclosureFee : '0')).toStringAsFixed(2)} ლარი'));
+      textValues['solidarydemantNo'] = checkmark;
+      textValues['solidarydemantYes'] = square;
+      textValues['severalLiabilityNo'] = checkmark;
+      textValues['severalLiabilityYes'] = square;
     }
 
-// set loan principal
-    content.add(TextContent('loanPrincipal', '$loanPrincipal ლარი'));
+    textValues['reciprocalbligationNo'] = checkmark;
+    textValues['reciprocalbligationYes'] = square;
 
-// set loan interest and comission fee
-    !loanInterest.startsWith('0')
-        ? content.add(TextContent('loanInterest', '$loanInterest ლარი'))
-        : content.add(TextContent('loanInterest', ''));
-    !comissionFee.startsWith('0')
-        ? content
-            .add(TextContent('IssuanceFee', 'საკომისიო $comissionFee ლარი'))
-        : content.add(TextContent('IssuanceFee', ''));
-// set loan penalty and insurance fee
-    if (!loanPenalty.startsWith('0')) {
-      content.add(TextContent('loanPenalty', '$loanPenalty ლარი'));
+    if (addProperty) {
+      textValues['foreclosureYes'] = checkmark;
+      textValues['foreclosureNo'] = square;
     } else {
-      content.add(TextContent('loanPenalty', ''));
+      textValues['foreclosureNo'] = checkmark;
+      textValues['foreclosureYes'] = square;
     }
 
-    if (!insuranceAmount.startsWith('0')) {
-      content.add(TextContent(
-          'insuranceCommission', 'სიცოცხლის დაზღვევა - $insuranceAmount ლარი'));
+    if (transition) {
+      textValues['tobeenforcedYes'] = checkmark;
+      textValues['tobeenforcedNo'] = square;
     } else {
-      content.add(TextContent('insuranceCommission', ''));
+      textValues['tobeenforcedNo'] = checkmark;
+      textValues['tobeenforcedYes'] = square;
     }
 
-// set application fee
+    final double totalAmount = double.parse(loanPrincipal) +
+        double.parse(loanInterest) +
+        double.parse(comissionFee) +
+        double.parse(loanPenalty) +
+        double.parse(insuranceAmount) +
+        double.parse(applicationFee) +
+        double.parse(addProperty ? foreclosureFee : '0');
+    
+    textValues['requestSum'] = '${totalAmount.toStringAsFixed(2)} ლარი';
+    textValues['loanPrincipal'] = '$loanPrincipal ლარი';
+    textValues['loanInterest'] = loanInterest != '0' ? '$loanInterest ლარი' : '';
+    textValues['IssuanceFee'] = comissionFee != '0' ? 'საკომისიო $comissionFee ლარი' : '';
+    textValues['loanPenalty'] = loanPenalty != '0' ? '$loanPenalty ლარი' : '';
+    textValues['insuranceCommission'] = insuranceAmount != '0' ? 'სიცოცხლის დაზღვევა - $insuranceAmount ლარი' : '';
+    textValues['applicationFee'] = 'სააპლიკაციო საფასური - $applicationFee ლარი';
+    textValues['foreclosureFee'] = addProperty ? 'ყადაღის რეგისტრაციის საფასური - $foreclosureFee ლარი' : '';
 
-    content.add(TextContent(
-        'applicationFee', 'სააპლიკაციო საფასური - $applicationFee ლარი'));
+    final DateTime now = DateTime.now();
+    textValues['writeDate'] = '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}';
 
-// set foreclosure fee
-    if (addProperty == true) {
-      content.add(TextContent('foreclosureFee',
-          'ყადაღის რეგისტრაციის საფასური - $foreclosureFee ლარი'));
-    } else {
-      content.add(TextContent('foreclosureFee', ''));
+    final List<String> debtorList = debtorsData.map((e) => e.toString()).toList();
+    if (debtorList.isNotEmpty && (debtorList[0].contains('პ/ნ') || debtorList[0].contains('პ.ნ') || debtorList[0].contains('პნ'))) {
+      final idx = debtorList[0].indexOf('პ/ნ');
+      debtorName = idx != -1 ? debtorList[0].substring(0, idx) : debtorName;
     }
 
-// application creation time  ---------------------------------------------------
+    final List<String> propertyLines = addProperty ? propertyList.split('\n') : [];
 
-    DateTime now = DateTime.now();
-    String formattedDate =
-        '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}';
-    content.add(TextContent('writeDate', formattedDate));
+    const templatePath = 'assets/template.docx';
+    final templateBytes = (await rootBundle.load(templatePath)).buffer.asUint8List();
 
-//
-
-// set debtor info --------------------------------------------------------------
-
-    List<Content> localContent = [];
-
-// Loop through debtorsData and add each element as separate content
-
-    for (int j = 0; j < debtorsData.length; j++) {
-      var e = debtorsData[j];
-      localContent.add(TextContent('debtor', e));
-    }
-//  Add a list to the view.
-
-    content.add(ListContent("debtorList", localContent));
-
-//
-    if (debtorsData.isNotEmpty && debtorsData[0].contains('პ/ნ') ||
-        debtorsData[0].contains('პ.ნ') ||
-        debtorsData[0].contains('პნ')) {
-      String name = debtorsData[0].substring(0, debtorsData[0].indexOf('პ/ნ'));
-      debtorName = name;
-    }
-
-    // Apply the replacements
-    final modifiedDocxBytes = await template.generate(content);
-
-    // Create a Blob and generate a download link
-    final blob = html.Blob(
-        [Uint8List.fromList(modifiedDocxBytes!)], 'application/msword');
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
-      ..setAttribute("download", "აპლიკაცია $debtorName.docx")
-      ..click();
-
-    // Clean up resources
-
-    html.Url.revokeObjectUrl(url);
-    // ignore: use_build_context_synchronously
-    QuickAlert.show(
-      // ignore: use_build_context_synchronously
-      context: context,
-      type: QuickAlertType.success,
+    final modifiedDocxBytes = DocxService.fillContentControls(
+      templateBytes: templateBytes,
+      textValues: textValues,
+      debtorItems: debtorList,
+      propertyLines: propertyLines,
     );
+
+    final blob = html.Blob([modifiedDocxBytes], 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    html.AnchorElement(href: url)
+      ..setAttribute('download', 'აპლიკაცია $debtorName.docx')
+      ..click();
+    html.Url.revokeObjectUrl(url);
+
+    // ignore: use_build_context_synchronously
+    QuickAlert.show(context: context, type: QuickAlertType.success);
   } catch (e) {
     print('Error modifying DOCX file: $e');
     // ignore: use_build_context_synchronously
-    QuickAlert.show(
-      // ignore: use_build_context_synchronously
-      context: context,
-      type: QuickAlertType.error,
-    );
+    QuickAlert.show(context: context, type: QuickAlertType.error);
   }
 }

@@ -32,238 +32,242 @@ class OrgInputs extends StatefulWidget {
 }
 
 class OrgInputsState extends State<OrgInputs> {
-  final smallGap = const SizedBox(height: 20);
-  // Create a ValueNotifier to hold the checkbox state
   bool isSaveCheckboxValue = false;
   bool isRepresentative = true;
-  bool isInputOn = true;
 
-  //localstorage variables
   late LocalStorage storage;
-  String? organizationName;
-  String? organizationId;
-  String? organizationAddress;
-  String? organizationNumber;
-  String? organizationBankIbanNumber;
-  String? organizationBanckAccount;
-  String? organizationRepresentatorName;
-  String? organizationRepresentatorIdNumber;
-  String? organizationRepresentatorAdress;
-  String? organizationRepresentatorInfo;
-  bool? saveData;
-  bool? representative;
 
   @override
   void initState() {
     super.initState();
-    initializeStorage();
+    _initStorage();
   }
 
-  //fetch data from localstorage
-  Future<void> initializeStorage() async {
+  Future<void> _initStorage() async {
     storage = LocalStorage('app');
     await storage.ready;
     setState(() {
-      //checkbox data
       storage.setItem('representator', true);
-      saveData = storage.getItem('saveData');
-      representative = storage.getItem('representator');
-      isRepresentative = representative ?? true;
-      isSaveCheckboxValue = saveData ?? false;
-      //other inputs
-      organizationName = storage.getItem('organizationName');
-      organizationId = storage.getItem('organizationId');
-      organizationAddress = storage.getItem('organizationAddress');
-      organizationNumber = storage.getItem('organizationNumber');
-      organizationBankIbanNumber =
-          storage.getItem('organizationBankIbanNumber');
-      organizationBanckAccount = storage.getItem('organizationBanckAccount');
-      //------------------------------------------------------
-      widget.orgNameController.text = organizationName ?? '';
-      widget.orgIdController.text = organizationId ?? '';
-      widget.orgAddressController.text = organizationAddress ?? '';
-      widget.orgPhoneNumberController.text = organizationNumber ?? '';
-      widget.orgIBanNumberController.text = organizationBankIbanNumber ?? '';
-      widget.orgAccuntNumberController.text = organizationBanckAccount ?? '';
+      isSaveCheckboxValue = storage.getItem('saveData') ?? false;
+      isRepresentative = storage.getItem('representator') ?? true;
 
-      //representator
+      widget.orgNameController.text = storage.getItem('organizationName') ?? '';
+      widget.orgIdController.text = storage.getItem('organizationId') ?? '';
+      widget.orgAddressController.text = storage.getItem('organizationAddress') ?? '';
+      widget.orgPhoneNumberController.text = storage.getItem('organizationNumber') ?? '';
+      widget.orgIBanNumberController.text = storage.getItem('organizationBankIbanNumber') ?? '';
+      widget.orgAccuntNumberController.text = storage.getItem('organizationBanckAccount') ?? '';
 
-      if (isRepresentative == true) {
-        organizationRepresentatorName =
-            storage.getItem('organizationRepresentatorName');
-        organizationRepresentatorAdress =
-            storage.getItem('organizationRepresentatorAdress');
-        organizationRepresentatorInfo =
-            storage.getItem('organizationRepresentatorInfo');
-        organizationRepresentatorIdNumber = storage.getItem('organizationRepresentatorIdNumber');
-        //----------------------------------------------------------------------------
+      if (isRepresentative) {
         widget.representativeNameController.text =
-            organizationRepresentatorName ?? '';
-        widget.representativeIdController.text = organizationRepresentatorIdNumber ?? '';
+            storage.getItem('organizationRepresentatorName') ?? '';
+        widget.representativeIdController.text =
+            storage.getItem('organizationRepresentatorIdNumber') ?? '';
         widget.representativeAdressController.text =
-            organizationRepresentatorAdress ?? '';
+            storage.getItem('organizationRepresentatorAdress') ?? '';
         widget.representativeNumberAndEmailController.text =
-            organizationRepresentatorInfo ?? '';
+            storage.getItem('organizationRepresentatorInfo') ?? '';
       }
     });
   }
-  //---------------------------------------------------------------------------------------
 
-  void generateLocalstorageItems(String name, String content) {
-    storage.setItem(name, content);
+  void _saveToStorage() {
+    storage.setItem('organizationName', widget.orgNameController.text);
+    storage.setItem('organizationId', widget.orgIdController.text);
+    storage.setItem('organizationAddress', widget.orgAddressController.text);
+    storage.setItem('organizationNumber', widget.orgPhoneNumberController.text);
+    storage.setItem('organizationBankIbanNumber', widget.orgIBanNumberController.text);
+    storage.setItem('organizationBanckAccount', widget.orgAccuntNumberController.text);
+    if (isRepresentative) {
+      storage.setItem('organizationRepresentatorName', widget.representativeNameController.text);
+      storage.setItem('organizationRepresentatorIdNumber', widget.representativeIdController.text);
+      storage.setItem('organizationRepresentatorAdress', widget.representativeAdressController.text);
+      storage.setItem('organizationRepresentatorInfo', widget.representativeNumberAndEmailController.text);
+    }
   }
-
-  //----------------------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
-    //final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600; // Adjust this breakpoint as needed
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Applicant fields grid
+        _FormGrid(children: [
+          _buildField('აპლიკანტის დასახელება', widget.orgNameController,
+              icon: Icons.business_outlined),
+          _buildField('საიდენტიფიკაციო კოდი', widget.orgIdController,
+              icon: Icons.badge_outlined),
+          _buildField('მისამართი', widget.orgAddressController,
+              icon: Icons.location_on_outlined),
+          _buildField('ტელეფონი', widget.orgPhoneNumberController,
+              icon: Icons.phone_outlined),
+          _buildField('IBAN', widget.orgIBanNumberController,
+              icon: Icons.account_balance_outlined),
+          _buildField('ანგარიშის ნომერი', widget.orgAccuntNumberController,
+              icon: Icons.credit_card_outlined),
+        ]),
+        const SizedBox(height: 16),
 
-    return Padding(
-      padding: const EdgeInsets.all(28.0),
-      child: Wrap(
-        spacing: 10.0, // Horizontal spacing between fields
-        runSpacing: 10.0, // Vertical spacing between lines
-        alignment: isSmallScreen ? WrapAlignment.center : WrapAlignment.start,
-        children: [
-          ..._buildTwoRowsFormFields(),
-          Row(
+        // Checkboxes row
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Wrap(
+            spacing: 24,
+            runSpacing: 4,
             children: [
-              Checkbox(
+              _StyledCheckbox(
                 value: isRepresentative,
-                onChanged: (newValue) {
-                  // Update the checkbox state using the ValueNotifier
-
-                  setState(() {
-                    isRepresentative = newValue ?? true;
-                  });
+                label: 'წარმომადგენელი',
+                onChanged: (v) {
+                  setState(() => isRepresentative = v ?? true);
                   storage.setItem('representator', isRepresentative);
-                  //print(isRepresentative);
                 },
               ),
-              const Text('წარმომადგენელი')
-            ],
-          ),
-          Row(
-            children: [
-              Checkbox(
+              _StyledCheckbox(
                 value: isSaveCheckboxValue,
-                onChanged: (newValue) {
-                  // Update the checkbox state using the ValueNotifier
-                  setState(() {
-                    isSaveCheckboxValue = newValue ?? false;
-                  });
-                  //print(isSaveCheckboxValue);
+                label: 'ინფორმაციის დამახსოვრება',
+                onChanged: (v) {
+                  setState(() => isSaveCheckboxValue = v ?? false);
                   storage.setItem('saveData', isSaveCheckboxValue);
-                  if (isSaveCheckboxValue == true) {
-                    //  storage.setItem('organizationName', widget.orgNameController.text);
-                    //  storage.setItem('organizationId', widget.orgIdController.text);
-                    //  storage.setItem('organizationAddress', widget.orgAddressController.text);
-                    generateLocalstorageItems(
-                        'organizationName', widget.orgNameController.text);
-                    generateLocalstorageItems(
-                        'organizationId', widget.orgIdController.text);
-                    generateLocalstorageItems('organizationAddress',
-                        widget.orgAddressController.text);
-                    generateLocalstorageItems('organizationNumber',
-                        widget.orgPhoneNumberController.text);
-                    generateLocalstorageItems('organizationBankIbanNumber',
-                        widget.orgIBanNumberController.text);
-                    generateLocalstorageItems('organizationBanckAccount',
-                        widget.orgAccuntNumberController.text);
-
-                    if (isRepresentative == true) {
-                      generateLocalstorageItems('organizationRepresentatorName',
-                          widget.representativeNameController.text);
-                       generateLocalstorageItems('organizationRepresentatorIdNumber',
-                          widget.representativeIdController.text);
-                      generateLocalstorageItems(
-                          'organizationRepresentatorAdress',
-                          widget.representativeAdressController.text);
-                      generateLocalstorageItems('organizationRepresentatorInfo',
-                          widget.representativeNumberAndEmailController.text);
-                    }
-                  } else {
-                    //storage.clear();
-                  }
+                  if (isSaveCheckboxValue) _saveToStorage();
                 },
               ),
-              const Text('ინფორმაციის დამახსოვრება')
             ],
           ),
-          smallGap,
+        ),
+        const SizedBox(height: 16),
+
+        // Representative section
+        if (isRepresentative) ...[
+          _SectionDivider(label: 'წარმომადგენელი'),
+          const SizedBox(height: 12),
+          _FormGrid(children: [
+            _buildField('სახელი გვარი', widget.representativeNameController,
+                icon: Icons.person_outlined),
+            _buildField('პირადი ნომერი', widget.representativeIdController,
+                icon: Icons.badge_outlined),
+            _buildField('მისამართი', widget.representativeAdressController,
+                icon: Icons.location_on_outlined),
+            _buildField('ტელ. / Email', widget.representativeNumberAndEmailController,
+                icon: Icons.contact_mail_outlined),
+          ]),
         ],
-      ),
+      ],
     );
   }
 
-  List<Widget> _buildTwoRowsFormFields() {
-    return [
-      _buildField('აპლიკანტის დასახელება', widget.orgNameController,
-          isSaveCheckboxValue),
-      _buildField('აპლიკანტის საიდენტიფიკაციო კოდი', widget.orgIdController,
-          isSaveCheckboxValue),
-      _buildField('აპლიკანტის მისამართი', widget.orgAddressController,
-          isSaveCheckboxValue),
-      _buildField('აპლიკანტის ტელეფონის ნომერი',
-          widget.orgPhoneNumberController, isSaveCheckboxValue),
-      _buildField(
-          'IBAN - ნომერი', widget.orgIBanNumberController, isSaveCheckboxValue),
-      _buildField('აპლიკანტის ანგარიშის ნომერი',
-          widget.orgAccuntNumberController, isSaveCheckboxValue),
-      isRepresentative
-          ? Wrap(
-              spacing: 10.0, // Horizontal spacing between fields
-              runSpacing: 10.0, // Vertical spacing between lines
-              //alignment: isSmallScreen ? WrapAlignment.center : WrapAlignment.start,
-              children: [
-                _buildField('წარმომადგენელი',
-                    widget.representativeNameController, isSaveCheckboxValue),
-                _buildField('წარმომადგენლის პირადი ნომერი',
-                    widget.representativeIdController, isSaveCheckboxValue),
-                _buildField('წარმომადგენლის მისამართი',
-                    widget.representativeAdressController, isSaveCheckboxValue),
-                _buildField(
-                    'წარმომადგენლის Phone & Email',
-                    widget.representativeNumberAndEmailController,
-                    isSaveCheckboxValue),
-              ],
-            )
-          : Container()
-    ];
+  Widget _buildField(String label, TextEditingController ctrl,
+      {required IconData icon}) {
+    return TextFormField(
+      enabled: !isSaveCheckboxValue,
+      controller: ctrl,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, size: 18, color: const Color(0xFF94A3B8)),
+      ),
+      validator: (v) =>
+          (v == null || v.isEmpty) ? 'შეიყვანეთ $label' : null,
+    );
   }
+}
 
-  Widget _buildField(
-      String labelText, TextEditingController controller, bool enabled) {
-    //print('Building field for $labelText with enabled state: $enabled');
-    return Column(
-      children: [
-        SizedBox(
-          width: 250,
-          child: TextFormField(
-            enabled: !enabled,
-            controller: controller,
-            decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 1.0, horizontal: 8.0),
-              labelText: labelText,
-              labelStyle: const TextStyle(fontSize: 12),
-              border: const OutlineInputBorder(),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 240, 235, 235),
+// ─── Shared UI primitives ────────────────────────────────────────────────────
+
+class _FormGrid extends StatelessWidget {
+  final List<Widget> children;
+  const _FormGrid({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      final cols = constraints.maxWidth > 600 ? 2 : 1;
+      if (cols == 1) {
+        return Column(
+          children: children
+              .map((c) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12), child: c))
+              .toList(),
+        );
+      }
+      // 2-column grid
+      final rows = <Widget>[];
+      for (int i = 0; i < children.length; i += 2) {
+        final right = i + 1 < children.length ? children[i + 1] : const SizedBox();
+        rows.add(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: children[i]),
+                const SizedBox(width: 12),
+                Expanded(child: right),
+              ],
             ),
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.done,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'შეიყვანეთ $labelText';
-              }
-              return null;
-            },
+          ),
+        );
+      }
+      return Column(children: rows);
+    });
+  }
+}
+
+class _StyledCheckbox extends StatelessWidget {
+  final bool value;
+  final String label;
+  final ValueChanged<bool?> onChanged;
+  const _StyledCheckbox(
+      {required this.value, required this.label, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: () => onChanged(!value),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Checkbox(value: value, onChanged: onChanged),
+            const SizedBox(width: 4),
+            Text(label,
+                style: const TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF475569),
+                    fontWeight: FontWeight.w500)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionDivider extends StatelessWidget {
+  final String label;
+  const _SectionDivider({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 3,
+          height: 16,
+          decoration: BoxDecoration(
+            color: const Color(0xFF4F46E5),
+            borderRadius: BorderRadius.circular(2),
           ),
         ),
+        const SizedBox(width: 8),
+        Text(label,
+            style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF4F46E5),
+                letterSpacing: 0.5)),
+        const SizedBox(width: 12),
+        const Expanded(child: Divider(color: Color(0xFFE2E8F0))),
       ],
     );
   }

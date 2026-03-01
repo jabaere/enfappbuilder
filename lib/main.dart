@@ -70,51 +70,106 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      //  debugShowMaterialGrid: true,
       title: 'Applicationbuilder',
       theme: ThemeData(
         useMaterial3: true,
+        fontFamily: 'Roboto',
         colorScheme: ColorScheme.fromSeed(
-        seedColor: colorScheme.onSurfaceVariant,
-        surface: colorScheme.onSurface,
-      // ···
-        brightness: Brightness.light,
-    ),
-    
-        appBarTheme: AppBarTheme(
-          backgroundColor: colorScheme.onSurfaceVariant,
+          seedColor: const Color(0xFF4F46E5),
+          brightness: Brightness.light,
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF1F5F9),
+        cardTheme: const CardThemeData(
+          elevation: 0,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+            side: BorderSide(color: Color(0xFFE2E8F0)),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xFFF8FAFC),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xFF4F46E5), width: 2),
+          ),
+          labelStyle: const TextStyle(color: Color(0xFF64748B), fontSize: 13),
+          errorStyle: const TextStyle(fontSize: 11),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF4F46E5),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+        ),
+        checkboxTheme: CheckboxThemeData(
+          fillColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) return const Color(0xFF4F46E5);
+            return Colors.white;
+          }),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF4F46E5),
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: false,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.3,
+          ),
         ),
       ),
       home: FutureBuilder<bool>(
         future: checkUserAuthenticationState(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // Show a loading indicator while checking authentication status
-            return const Center(
-                child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: CircularProgressIndicator(color: Colors.teal)));
-          } else {
-            // Decide which screen to show based on the authentication status
-            return snapshot.data == true
-                ? MyHomePage(
-                    title: 'აპლიკაციის გენერირება',
-                    fetchData: fetchData, // Add your actual fetchData logic
-                  )
-                : LoginScreen(onLoginSuccess: () {
-                    // Reload the widget when the user successfully logs in
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => MyHomePage(
-                        title: 'აპლიკაციის გენერირება',
-                        fetchData: fetchData, // Add your actual fetchData logic
-                      ),
-                    ));
-                  });
+            return const Scaffold(
+              backgroundColor: Color(0xFF4F46E5),
+              body: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 48, height: 48,
+                      child: CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 3),
+                    ),
+                    SizedBox(height: 20),
+                    Text('იტვირთება...', style: TextStyle(
+                      color: Colors.white70, fontSize: 14)),
+                  ],
+                ),
+              ),
+            );
           }
+          return snapshot.data == true
+              ? MyHomePage(title: 'აპლიკაციის გენერირება', fetchData: fetchData)
+              : LoginScreen(onLoginSuccess: () {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => MyHomePage(
+                      title: 'აპლიკაციის გენერირება', fetchData: fetchData),
+                  ));
+                });
         },
       ),
     );
@@ -192,60 +247,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: TextStyle(color: colorScheme.surfaceContainerHighest),
-        ),
-        actions: <Widget>[
-          // IconButton(
-          //   icon: const Icon(Icons.access_time),
-          //   onPressed: () {
-          //     Navigator.of(context).push(_createRoute(InputWidget()));
-          //   },
-          // ),
-          IconButton(
-            icon: const Icon(Icons.upload),
-            color: Colors.grey[200],
-            onPressed: () {
-              Navigator.of(context).push(_createRoute(const UploadScreen()));
-            },
+        title: Text(widget.title),
+        actions: [
+          _AppBarButton(
+            icon: Icons.cloud_upload_outlined,
+            tooltip: 'ატვირთვა',
+            onTap: () => Navigator.of(context).push(_createRoute(const UploadScreen())),
           ),
-          IconButton(
-            icon: const Icon(Icons.warning_amber_rounded),
-            color: Colors.grey[200],
-            onPressed: () {
-              Navigator.of(context)
-                  .push(_createRoute(const InstructionsScreen()));
-            },
+          _AppBarButton(
+            icon: Icons.help_outline_rounded,
+            tooltip: 'ინსტრუქცია',
+            onTap: () => Navigator.of(context).push(_createRoute(const InstructionsScreen())),
           ),
-          // IconButton(
-          //   icon: const Icon(Icons.segment_sharp),
-          //   color: Colors.grey[200],
-          //   onPressed: () {
-          //     Navigator.of(context).push(_createRoute(const About()));
-          //   },
-          // ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            color: Colors.grey[200],
-            onPressed: () async {
+          _AppBarButton(
+            icon: Icons.logout_rounded,
+            tooltip: 'გასვლა',
+            onTap: () async {
               final LocalStorage storage = LocalStorage('my_app');
-
-              // Save authentication state
               await storage.setItem('isLoggedIn', false);
               await storage.setItem('token', '');
-              //
               await FirebaseAuth.instance.signOut();
-              
-              print('Logged out');
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => LoginScreen(
                   onLoginSuccess: () async {
-                    // Navigate to the login screen
+                    // ignore: use_build_context_synchronously
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => MyHomePage(
                         title: 'აპლიკაციის გენერირება',
@@ -257,17 +285,35 @@ class _MyHomePageState extends State<MyHomePage> {
               ));
             },
           ),
+          const SizedBox(width: 8),
         ],
       ),
-      body: Container(
-        color: Colors.transparent,
-        child: isLoading
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.teal,
-                ),
-              )
-            : getPage(),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFF4F46E5)),
+            )
+          : getPage(),
+    );
+  }
+}
+
+class _AppBarButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  const _AppBarButton({required this.icon, required this.tooltip, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Icon(icon, color: Colors.white.withOpacity(0.9), size: 22),
+        ),
       ),
     );
   }
