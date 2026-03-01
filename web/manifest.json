@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Web App to generate Microsoft Word documents (.docx) and parse PDF files to extract and generate text for fund transfers. Built using Dart, Flutter, and Firebase",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
