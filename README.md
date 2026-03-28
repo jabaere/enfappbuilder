@@ -16,13 +16,11 @@ Web App to generate Microsoft Word documents (.docx) and parse PDF files to extr
 
 6. Installable (PWA): The app is a Progressive Web App (PWA), which means it can be installed directly on various devices (desktop, mobile, or tablet) from a web browser. Once installed, it behaves like a native app, allowing users to access its features conveniently without needing to navigate to a browser each time. This enhances usability, provides an app-like experience, and ensures the app is readily available whenever needed, even with offline capabilities in some cases.
    
-![app-build-05](https://github.com/user-attachments/assets/5cf20067-9d98-4e31-bcd2-1995d30ba1c2)
 
-![app-build-01](https://github.com/user-attachments/assets/0b9e5782-3980-44a7-86b2-b41ca46d572b)
+<img width="1920" height="919" alt="Applicationbuilder-03-28-2026_10_40_AM" src="https://github.com/user-attachments/assets/ac5c21d8-150d-42ba-b210-eb10151219bc" />
 
-![app-build-02](https://github.com/user-attachments/assets/6baf6f51-a68f-4d59-823b-190df64f7a2d)
+<img width="1920" height="919" alt="Applicationbuilder-03-28-2026_11_16_AM" src="https://github.com/user-attachments/assets/837d9a07-2a6b-4045-8571-bbcf94d81673" />
 
-![app-build-03](https://github.com/user-attachments/assets/6dbbf162-7571-4814-97dc-242362f5488a)
+<img width="1920" height="919" alt="Applicationbuilder-03-28-2026_11_18_AM" src="https://github.com/user-attachments/assets/6ef05b33-3e64-4a20-8648-f511f0d56ac1" />
 
-![app-build-04](https://github.com/user-attachments/assets/ad9f5103-71f4-4da3-96e4-823a708eea42)
-
+<img width="1920" height="919" alt="Applicationbuilder-03-28-2026_11_18_AM (1)" src="https://github.com/user-attachments/assets/9387f433-ded2-4a3d-be7c-91633d01ec96" />
