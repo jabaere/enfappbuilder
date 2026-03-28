@@ -15,6 +15,40 @@ Web App to generate Microsoft Word documents (.docx) and parse PDF files to extr
 5. Cloud Integration: Firebase is used for backend services, offering real-time database capabilities, authentication, and cloud storage, ensuring that the app is scalable and secure.
 
 6. Installable (PWA): The app is a Progressive Web App (PWA), which means it can be installed directly on various devices (desktop, mobile, or tablet) from a web browser. Once installed, it behaves like a native app, allowing users to access its features conveniently without needing to navigate to a browser each time. This enhances usability, provides an app-like experience, and ensures the app is readily available whenever needed, even with offline capabilities in some cases.
+
+## Last Update
+
+### Files Changed
+
+| File | Change |
+|------|--------|
+| `pubspec.yaml` | Removed `docx_template: ^0.4.0`, added `archive: ^3.6.1`, removed `dependency_overrides` |
+| `lib/services/docx_service.dart` | New custom DOCX processor |
+| `lib/home.dart` | Refactored `changeTextContent()` to use `DocxService` |
+
+---
+
+### How the New Service Works
+
+A `.docx` file is essentially a ZIP archive. The new `DocxService.fillContentControls()` works as follows:
+
+- Unpacks the DOCX bytes using `archive`
+- Reads `word/document.xml` as UTF-8 text
+- Locates each `<w:sdt>` (Structured Document Tag / Content Control) using  
+  `<w:alias w:val="tagName"/>` (same approach used by `docx_template`)
+- Replaces the `<w:t>` text content inside each matched control
+- Expands list controls (e.g., `debtorList`, `multilineList`) by cloning the template paragraph for each entry
+- Repacks the archive and returns the updated DOCX bytes
+
+---
+
+### Notes
+
+- The DOCX template remains unchanged
+- Existing Microsoft Word Content Controls are fully preserved
+- This replaces `docx_template` with a custom implementation
+
+## Screenshots
    
 
 <img width="1920" height="919" alt="Applicationbuilder-03-28-2026_10_40_AM" src="https://github.com/user-attachments/assets/ac5c21d8-150d-42ba-b210-eb10151219bc" />
