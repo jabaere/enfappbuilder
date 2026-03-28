@@ -1,20 +1,74 @@
-# applicationbuilder
+# ENF App Builder (აპლიკაციის გენერატორი)
 
-Web App to generate Microsoft Word documents (.docx) and parse PDF files to extract and generate text for fund transfers. Built using Dart, Flutter, and Firebase
+A professional, local-first legal document automation suite built with Flutter and Firebase. Designed to streamline the generation of Microsoft Word (.docx) documents for enforcement and legal proceedings.
 
-## Key features of the application include:
+---
 
-1. Document Generation: The app can create Microsoft Word documents based on user inputs or predefined templates, simplifying the process of document creation.
+## 🌟 Overview
 
-2. PDF Parsing: It can parse PDF files to extract relevant information, which is particularly useful for generating text related to fund transfers.
+**ENF App Builder** is a specialized tool that automates the creation of complex legal documents from standardized templates. It focuses on **privacy, speed, and precision**, ensuring that sensitive legal data remains on the user's device while providing a seamless, cross-platform experience.
 
-3. Fund Transfer Text Generation: Based on the details extracted from PDFs or provided by the user, the app generates text that can be used for transferring funds, ensuring accuracy and efficiency in financial transactions.
+## ✨ Key Features
 
-4. Cross-Platform Compatibility: Developed using Flutter, the app is capable of running on multiple platforms, providing a consistent user experience across devices.
+### 📄 Smart DOCX Generation
+- Uses advanced ZIP/XML manipulation to fill Word **Content Controls (SDT blocks)**.
+- Replaces tags like `debtorList` and `multilineList` with dynamic data, allowing for repeating rows and complex property lists.
+- Maintains original template styling and formatting perfectly.
 
-5. Cloud Integration: Firebase is used for backend services, offering real-time database capabilities, authentication, and cloud storage, ensuring that the app is scalable and secure.
+### 🔒 Privacy & Local-First Security
+- **No Data Uploads**: All document processing happens directly in the browser or on the local device.
+- **Client-Side Storage**: Sensitive applicant information can be "remembered" using local browser storage, never touching a central database.
+- **Offline Ready**: Operates independently of server-side logic for core document generation.
 
-6. Installable (PWA): The app is a Progressive Web App (PWA), which means it can be installed directly on various devices (desktop, mobile, or tablet) from a web browser. Once installed, it behaves like a native app, allowing users to access its features conveniently without needing to navigate to a browser each time. This enhances usability, provides an app-like experience, and ensures the app is readily available whenever needed, even with offline capabilities in some cases.
+### ⚖️ Legal Logic & Validation
+- **Solidary Liability**: Automatically calculates and marks "Solidary" status when multiple debtors are involved.
+- **Conditional Fields**: Dynamically shows property fields based on legal triggers (e.g., "Seizure" selection).
+- **Proactive Error Handling**: Prevents document generation if critical data (like debtor details) is missing.
+
+---
+
+## 🇬🇪 გამოყენების ინსტრუქცია (Instructions)
+
+1. **დოკუმენტის გახსნა**: სასურველია აპლიკაციის მიერ დაგენერირებული დოკუმენტი გახსნათ **Microsoft Word**-ის საშუალებით.
+2. **მონაცემთა დამახსოვრება**: შეგიძლიათ შეინახოთ აპლიკანტის ინფორმაცია "ინფორმაციის დამახსოვრება" ღილაკით (მონაცემები რჩება თქვენს ბრაუზერში).
+3. **მოვალის გრაფა**: შეიყვანეთ ინფორმაცია თანმიმდევრობით: *სახელი გვარი, პირადი ნომერი, მისამართი, ტელეფონის ნომერი*.
+4. **ყადაღა & ქონება**: "ყადაღის" მონიშვნისას ჩნდება ქონების დამატებითი გრაფა. ყოველი ახალი ქონება დაიწყეთ ახალი ხაზიდან.
+5. **სტანდარტული დასაბუთება**: აპლიკაცია ავტომატურად ამატებს სესხის ხელშეკრულების, გრაფიკის და სხვა სტანდარტულ მოთხოვნებს, რომელთა შეცვლაც შეგიძლიათ Word-ში.
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework**: [Flutter](https://flutter.dev/) (Web, Desktop, Mobile)
+- **Language**: Dart
+- **Backend**: [Firebase](https://firebase.google.com/) (Authentication & Analytics)
+- **DOCX Processing**: Custom implementation using `archive` and `utf8` manipulation (located in `DocxService`).
+- **PDF Handling**: `syncfusion_flutter_pdf` for extraction and parsing.
+- **Local Persistence**: `localstorage` for caching user preferences.
+
+## 📂 Project Structure
+
+- `lib/services/docx_service.dart`: The core engine for manipulating Word XML structures.
+- `lib/screens/`: Flutter UI components (Home, Upload, Instructions, Login).
+- `lib/particles/`: Data models and reusable UI "particles".
+- `assets/template.docx`: The master Word template with Content Controls.
+
+## 🚀 Getting Started
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/jabaere/enfappbuilder.git
+   ```
+2. **Install dependencies**:
+   ```bash
+   flutter pub get
+   ```
+3. **Run the app**:
+   ```bash
+   flutter run -d chrome
+   ```
+
+---
 
 ## Last Update
 
